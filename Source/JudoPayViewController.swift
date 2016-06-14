@@ -111,7 +111,7 @@ public class JudoPayViewController: UIViewController {
      
      - returns: will crash if executed
      */
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError("This class should not be initialised with initWithNibName:Bundle:")
     }
     
@@ -154,16 +154,16 @@ public class JudoPayViewController: UIViewController {
         // Button actions
         let payButtonTitle = self.myView.transactionType == .RegisterCard ? self.judoKitSession.theme.registerCardNavBarButtonTitle : self.judoKitSession.theme.paymentButtonTitle
 
-        self.myView.paymentButton.addTarget(self, action: #selector(JudoPayViewController.payButtonAction(_:)), forControlEvents: .TouchUpInside)
+        self.myView.paymentButton.addTarget(self, action: #selector(JudoPayViewController.payButtonAction(_:)), for: .TouchUpInside)
         self.myView.paymentNavBarButton = UIBarButtonItem(title: payButtonTitle, style: .Done, target: self, action: #selector(JudoPayViewController.payButtonAction(_:)))
-        self.myView.paymentNavBarButton!.enabled = false
+        self.myView.paymentNavBarButton!.isEnabled = false
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: self.judoKitSession.theme.backButtonTitle, style: .Plain, target: self, action: #selector(JudoPayViewController.doneButtonAction(_:)))
         self.navigationItem.rightBarButtonItem = self.myView.paymentNavBarButton
         
         self.navigationController?.navigationBar.tintColor = self.judoKitSession.theme.getTextColor()
         if !self.judoKitSession.theme.colorMode() {
-            self.navigationController?.navigationBar.barStyle = UIBarStyle.Black
+            self.navigationController?.navigationBar.barStyle = UIBarStyle.black
         }
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:self.judoKitSession.theme.getNavigationBarTitleColor()]
         
@@ -175,10 +175,10 @@ public class JudoPayViewController: UIViewController {
      
      - parameter animated: Animated
      */
-    public override func viewWillAppear(animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.myView.paymentEnabled(false)
+        self.myView.setPayment(enabled: false)
         
         self.myView.layoutIfNeeded()
         
@@ -194,7 +194,7 @@ public class JudoPayViewController: UIViewController {
      
      - parameter animated: Animated
      */
-    public override func viewDidAppear(animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if self.myView.cardInputField.textField.text?.characters.count > 0 {

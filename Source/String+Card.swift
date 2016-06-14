@@ -37,7 +37,7 @@ public extension String {
     - Throws CardLengthMismatchError: If amount of characters is longer than the maximum character number
     - Throws InvalidCardNumber: If the card number is invalid
     */
-    func cardPresentationString(configurations: [Card.Configuration]) throws -> String {
+    func cardPresentationString(_ configurations: [Card.Configuration]) throws -> String {
         
         let strippedSelf = self.strippedWhitespaces
         

@@ -27,11 +27,11 @@ import Foundation
 /**
  *  The type for all the input fields to conform to
  */
-@objc public protocol JudoInputType {
+public protocol JudoInputType {
     /**
      Helper method for the hintLabel to disappear or reset the timer when called. This is triggered by the `shouldChangeCharactersInRange:` method in each of the `inputField` subclasses
      */
-    @objc func didChangeInputText()
+    func didChangeInputText()
     
     
     /**
@@ -39,7 +39,7 @@ import Foundation
      
      - parameter textField: the `UITextField` that has a changed value
      */
-    @objc func textFieldDidChangeValue(textField: UITextField)
+    func textFieldDidChangeValue(textField: UITextField)
     
     
     /**
@@ -47,7 +47,7 @@ import Foundation
      
      - returns: an NSAttributedString depending on color and configuration
      */
-    @objc func placeholder() -> NSAttributedString?
+    func placeholder() -> AttributedString?
     
     
     /**
@@ -55,7 +55,7 @@ import Foundation
      
      - returns: a boolean indication whether logo should be shown
      */
-    @objc func containsLogo() -> Bool
+    func containsLogo() -> Bool
     
     
     /**
@@ -63,7 +63,7 @@ import Foundation
      
      - returns: the logo of an inputField
      */
-    @objc func logoView() -> CardLogoView?
+    func logoView() -> CardLogoView?
     
     
     /**
@@ -71,7 +71,7 @@ import Foundation
      
      - returns: the title of an inputField
      */
-    @objc func title() -> String
+    func title() -> String
  
     
     /**
@@ -79,7 +79,7 @@ import Foundation
      
      - returns: a title width in integer
      */
-    @objc func titleWidth() -> Int
+    func titleWidth() -> Int
     
     
     /**
@@ -87,7 +87,7 @@ import Foundation
      
      - returns: a String with instructions for a given inputField that pops up after 3 seconds of being idle
      */
-    @objc func hintLabelText() -> String
+    func hintLabelText() -> String
     
     
     /**
@@ -95,7 +95,7 @@ import Foundation
      
      - returns: true if information in field is valid
      */
-    @objc func isValid() -> Bool
+    func isValid() -> Bool
 }
 
 public extension JudoInputType where Self: JudoPayInputField {
@@ -134,7 +134,7 @@ public extension JudoInputType where Self: JudoPayInputField {
      
      - returns: an Attributed String that is the placeholder of the receiver
      */
-    public func placeholder() -> NSAttributedString? {
+    public func placeholder() -> AttributedString? {
         return nil
     }
     

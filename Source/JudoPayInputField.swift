@@ -237,7 +237,7 @@ extension JudoPayInputField: JudoInputType {
      
      - returns: an Attributed String that is the placeholder of the receiver
      */
-    public func placeholder() -> NSAttributedString? {
+    public func placeholder() -> AttributedString? {
         return nil
     }
     

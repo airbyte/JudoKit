@@ -27,9 +27,9 @@ import UIKit
 /// Label that sits below the payment entry form, showing alerts and hints
 public class HintLabel: UILabel {
     /// The alert text if an alert occured
-    var alertText: NSAttributedString?
+    var alertText: AttributedString?
     /// The hint text if a hint is being shown
-    var hintText: NSAttributedString?
+    var hintText: AttributedString?
     /// the theme of the current session
     let theme: Theme
     
@@ -43,7 +43,7 @@ public class HintLabel: UILabel {
      */
     public init(currentTheme: Theme) {
         self.theme = currentTheme
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
     }
     
     
@@ -72,8 +72,8 @@ public class HintLabel: UILabel {
      
      - parameter text: The hint text string to show
      */
-    public func showHint(text: String) {
-        self.hintText = NSAttributedString(string: text, attributes: [NSForegroundColorAttributeName:self.theme.getTextColor()])
+    public func showHint(_ text: String) {
+        self.hintText = AttributedString(string: text, attributes: [NSForegroundColorAttributeName:self.theme.getTextColor()])
         if self.alertText == nil {
             self.addAnimation()
             
@@ -90,7 +90,7 @@ public class HintLabel: UILabel {
     public func showAlert(text: String) {
         self.addAnimation()
         
-        self.alertText = NSAttributedString(string: text, attributes: [NSForegroundColorAttributeName:UIColor.redColor()])
+        self.alertText = AttributedString(string: text, attributes: [NSForegroundColorAttributeName:UIColor.red()])
         self.attributedText = self.alertText
     }
     
@@ -125,7 +125,7 @@ public class HintLabel: UILabel {
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         animation.type = kCATransitionFade
         animation.duration = 0.5
-        self.layer.addAnimation(animation, forKey: "kCATransitionFade")
+        self.layer.add(animation, forKey: "kCATransitionFade")
     }
     
 }

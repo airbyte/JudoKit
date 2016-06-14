@@ -36,7 +36,7 @@ import Foundation
  
  
 */
-public struct Response: GeneratorType, ArrayLiteralConvertible {
+public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLiteralConvertible {
     /// The current pagination response
     public let pagination: Pagination?
     /// The array that contains the transaction response objects
@@ -187,47 +187,6 @@ public struct PaymentToken {
         self.cv2 = cv2
     }
     
-}
-
-
-/**
- **Consumer**
- 
- Consumer stores information about a reference and a consumer token to be used in any kind of token transaction.
-*/
-public struct Consumer {
-    /// Our unique reference for this Consumer. Used in conjunction with the card token in repeat transactions.
-    public let consumerToken: String
-    /// Your reference for this Consumer as you sent in your request.
-    public let yourConsumerReference: String
-    
-    
-    /**
-     Designated initializer
-     
-     - parameter dict: the consumer dictionary which was return from the judo REST API
-     
-     - returns: a Consumer object
-     */
-    public init(_ dict: JSONDictionary) {
-        self.consumerToken = dict["consumerToken"] as! String
-        self.yourConsumerReference = dict["yourConsumerReference"] as! String
-    }
-    
-    
-    /**
-     Designated initializer
-     
-     - parameter consumerToken:     A consumer token string
-     - parameter consumerReference: A consumer reference string
-     
-     - returns: a consumer object
-     */
-    public init(consumerToken: String, consumerReference: String) {
-        self.consumerToken = consumerToken
-        self.yourConsumerReference = consumerReference
-    }
-
 }
 
 

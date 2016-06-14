@@ -89,7 +89,7 @@ public class CardLogoView: UIView {
      
      - parameter rect: the CGRect to draw in
      */
-    public override func drawRect(rect: CGRect) {
+    public override func draw(_ rect: CGRect) {
         switch self.type {
         case .Visa:
             drawCardVisa()

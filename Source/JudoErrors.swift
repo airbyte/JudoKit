@@ -33,7 +33,7 @@ public let JudoErrorDomain = "com.judopay.error"
  
  The JudoError object holds all the information about errors that occurred within the SDK or at any stage when making a call to the judo API
  */
-public struct JudoError: ErrorType {
+public struct JudoError: ErrorProtocol {
 
     /// The judo error code
     public var code: JudoErrorCode

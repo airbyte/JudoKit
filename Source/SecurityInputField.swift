@@ -39,7 +39,7 @@ public class SecurityInputField: JudoPayInputField {
     
     
     override func setupView() {
-        self.textField.secureTextEntry = true
+        self.textField.isSecureTextEntry = true
         super.setupView()
     }
     
@@ -60,8 +60,8 @@ public class SecurityInputField: JudoPayInputField {
         // Only handle delegate calls for own text field
         guard textField == self.textField else { return false }
         
-        if string.characters.count > 0 && self.textField.secureTextEntry {
-            self.textField.secureTextEntry = false
+        if string.characters.count > 0 && self.textField.isSecureTextEntry {
+            self.textField.isSecureTextEntry = false
         }
         
         // Get old and new text

@@ -32,8 +32,6 @@ internal let kJudoIDLenght = (6...10)
 /// Typealias for any Key value storage type objects
 public typealias JSONDictionary = [String : AnyObject]
 
-public typealias JudoCompletionBlock = (Response?, JudoError?) -> ()
-
 /// The Session struct is a wrapper for the REST API calls
 public struct Session {
     
@@ -68,19 +66,19 @@ public struct Session {
     - Parameter parameters: information that is set in the HTTP Body
     - Parameter completion: completion callblack block with the results
     */
-    public func POST(path: String, parameters: JSONDictionary, completion: JudoCompletionBlock) {
+    public func POST(path: String, parameters: JSONDictionary, completion: (Response<Value, Error>) -> ()) {
         
         // Create request
-        let request = self.judoRequest(endpoint + path)
+        let request = self.judoRequest(url: endpoint + path)
         
         // Rquest method
-        request.HTTPMethod = "POST"
+        request.httpMethod = "POST"
         
         // Safely create request body for the request
-        let requestBody: NSData?
+        let requestBody: Data?
         
         do {
-            requestBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions.PrettyPrinted)
+            requestBody = try JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions.prettyPrinted)
         } catch {
             print("body serialization failed")
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -89,7 +87,7 @@ public struct Session {
             return // BAIL
         }
         
-        request.HTTPBody = requestBody
+        request.httpBody = requestBody
         
         // Create a data task
         let task = self.task(request, completion: completion)
@@ -106,17 +104,17 @@ public struct Session {
     - Parameter parameters: information that is set in the HTTP Body
     - Parameter completion: completion callblack block with the results
     */
-    func GET(path: String, parameters: JSONDictionary?, completion: JudoCompletionBlock) {
+    func GET(path: String, parameters: JSONDictionary?, completion: (Response<Value, Error>) -> ()) {
         
         // Create request
-        let request = self.judoRequest(endpoint + path)
+        let request = self.judoRequest(url: endpoint + path)
         
-        request.HTTPMethod = "GET"
+        request.httpMethod = "GET"
         
         if let params = parameters {
-            let requestBody: NSData?
+            let requestBody: Data?
             do {
-                requestBody = try NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.PrettyPrinted)
+                requestBody = try JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions.prettyPrinted)
             } catch  {
                 print("body serialization failed")
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -124,7 +122,7 @@ public struct Session {
                 })
                 return
             }
-            request.HTTPBody = requestBody
+            request.httpBody = requestBody
         }
         
         let task = self.task(request, completion: completion)
@@ -141,18 +139,18 @@ public struct Session {
     - Parameter parameters: information that is set in the HTTP Body
     - Parameter completion: completion callblack block with the results
     */
-    func PUT(path: String, parameters: JSONDictionary, completion: JudoCompletionBlock) {
+    func PUT(path: String, parameters: JSONDictionary, completion: (Response<Value, Error>) -> ()) {
         // Create request
-        let request = self.judoRequest(endpoint + path)
+        let request = self.judoRequest(url: endpoint + path)
         
         // Request method
-        request.HTTPMethod = "PUT"
+        request.httpMethod = "PUT"
         
         // Safely create request body for the request
-        let requestBody: NSData?
+        let requestBody: Data?
         
         do {
-            requestBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions.PrettyPrinted)
+            requestBody = try JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions.prettyPrinted)
         } catch {
             print("body serialization failed")
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -161,7 +159,7 @@ public struct Session {
             return // BAIL
         }
         
-        request.HTTPBody = requestBody
+        request.httpBody = requestBody
         
         // Create a data task
         let task = self.task(request, completion: completion)
@@ -181,7 +179,7 @@ public struct Session {
     - Returns: a JSON HTTP request with authorization set
     */
     public func judoRequest(url: String) -> NSMutableURLRequest {
-        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
+        let request = NSMutableURLRequest(url: URL(string: url)!)
         // json configuration header
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -221,7 +219,7 @@ public struct Session {
     
     - Returns: a NSURLSessionDataTask that can be used to manipulate the call
     */
-    public func task(request: NSURLRequest, completion: JudoCompletionBlock) -> NSURLSessionDataTask {
+    public func task(request: URLRequest, completion: (Response<Value, Error>) -> ()) -> URLSessionDataTask {
         return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: { (data, resp, err) -> Void in
             
             // Error handling
