@@ -36,7 +36,7 @@ public class TransactionProcess {
     /// Device identification for this transaction to prevent fraud
     public private (set) var deviceSignal: JSONDictionary?
     /// The current Session to access the Judo API
-    public var APISession: Session?
+    public var apiSession: Session?
     
     
     /**
@@ -73,7 +73,7 @@ public class TransactionProcess {
      - Returns: reactive self
      */
     public func apiSession(session: Session) -> Self {
-        self.APISession = session
+        self.apiSession = session
         return self
     }
     
@@ -98,11 +98,11 @@ public class TransactionProcess {
      
      - Returns: reactive self
      */
-    public func completion(block: JudoCompletionBlock) -> Self {
+    public func completion(block: (Result<Value, Error>) -> ()) -> Self {
         
-        guard let parameters = self.APISession?.progressionParameters(self.receiptId, amount: self.amount, paymentReference: self.paymentReference, deviceSignal: self.deviceSignal) else { return self }
+        guard let parameters = self.apiSession?.progressionParameters(self.receiptId, amount: self.amount, paymentReference: self.paymentReference, deviceSignal: self.deviceSignal) else { return self }
         
-        self.APISession?.POST(self.path(), parameters: parameters) { (dict, error) -> Void in
+        self.apiSession?.POST(self.path(), parameters: parameters) { (dict, error) -> Void in
             block(dict, error)
         }
         

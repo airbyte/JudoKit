@@ -40,7 +40,7 @@ A Collection transaction is the counterpart to a Pre-authorization transaction. 
 ```
 
 */
-public class Collection: TransactionProcess, TransactionPath {
+public class CollectionTransaction: TransactionProcess, TransactionPath {
     
     /// path variable for a collection of a pre-authorization
     public static var path: String { get { return "/transactions/collections" } }

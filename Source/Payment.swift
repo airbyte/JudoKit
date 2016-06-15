@@ -83,14 +83,14 @@ public class Payment: Transaction, TransactionPath {
     
     - Returns: reactive Self
     */
-    public func validate(block: (JudoCompletionBlock)) throws -> Self {
+    public func validate(block: ((Result<Value, Error>) -> ())) throws -> Self {
         if (self.card != nil && self.payToken != nil) {
             throw JudoError(.CardAndTokenError)
         } else if self.card == nil && self.payToken == nil {
             throw JudoError(.CardOrTokenMissingError)
         }
         
-        self.APISession?.POST(self.dynamicType.path + "/validate", parameters: self.parameters) { (dict, error) -> Void in
+        self.apiSession?.POST(self.dynamicType.path + "/validate", parameters: self.parameters) { (dict, error) -> Void in
             block(dict, error)
         }
 

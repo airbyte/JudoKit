@@ -132,8 +132,6 @@ public class DateInputField: JudoPayInputField {
         // Only handle delegate calls for own textfield
         guard textField == self.textField else { return false }
         
-        guard let indexRange = range.toRange() else { return false }
-        
         // Get old and new text
         let oldString = textField.text!
         
@@ -221,7 +219,7 @@ public class DateInputField: JudoPayInputField {
             if self.isStartDate {
                 errorMessage = "Check start date"
             }
-            self.delegate?.dateInput(self, error: JudoError(.InvalidEntry, errorMessage))
+            self.delegate?.dateInput(self, error: JudoError(.InvalidEntry, message: errorMessage))
         }
     }
     
@@ -261,6 +259,7 @@ public class DateInputField: JudoPayInputField {
 // MARK: UIPickerViewDataSource
 extension DateInputField: UIPickerViewDataSource {
     
+    
     /**
     Datasource method for datePickerView
     
@@ -268,7 +267,7 @@ extension DateInputField: UIPickerViewDataSource {
     
     - returns: The number of components in the pickerView
     */
-    public func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 2
     }
     
@@ -324,11 +323,11 @@ extension DateInputField: UIPickerViewDelegate {
         if component == 0 {
             let month = NSString(format: "%02i", row + 1)
             let oldDateString = self.textField.text!
-            let year = oldDateString.substring(from: oldDateString.endIndex.advancedBy(n: -2))
+            let year = oldDateString.substring(from: oldDateString.index(oldDateString.endIndex, offsetBy: -2))
             self.textField.text = "\(month)/\(year)"
         } else if component == 1 {
             let oldDateString = self.textField.text!
-            let month = oldDateString.substring(to: oldDateString.startIndex.advancedBy(n: 2))
+            let month = oldDateString.substring(to: oldDateString.index(oldDateString.startIndex, offsetBy: 2))
             let year = NSString(format: "%02i", (self.isStartDate ? currentYear - row : currentYear + row) - 2000)
             self.textField.text = "\(month)/\(year)"
         }

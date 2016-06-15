@@ -93,7 +93,7 @@ public class SecurityInputField: JudoPayInputField {
      
      - parameter textField: The text field of which the content has changed
      */
-    public override func textFieldDidChangeValue(textField: UITextField) {
+    public override func textFieldDidChangeValue(_ textField: UITextField) {
         super.textFieldDidChangeValue(textField)
         self.didChangeInputText()
         guard let text = textField.text else { return }
@@ -107,7 +107,7 @@ public class SecurityInputField: JudoPayInputField {
      
      - returns: An Attributed String that is the placeholder of the receiver
      */
-    public override func placeholder() -> NSAttributedString? {
+    public override func placeholder() -> AttributedString? {
         return NSAttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName:self.theme.getPlaceholderTextColor()])
     }
     

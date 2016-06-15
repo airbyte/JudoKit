@@ -109,7 +109,7 @@ extension BillingCountryInputField: UIPickerViewDataSource {
      
      - returns: the number of components in the pickerView
      */
-    public func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     

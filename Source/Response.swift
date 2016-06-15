@@ -36,9 +36,37 @@ import Foundation
  
  
 */
-public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLiteralConvertible {
+public struct Response<Value, Error: ErrorProtocol> {
     /// The current pagination response
     public let pagination: Pagination?
+    
+    
+    /**
+     Initialize a Response object with pagination if available
+     
+     - Parameter pagination: the pagination information for the response
+     
+     - Returns: a Response object
+     */
+    init(_ pagination: Pagination?) {
+        self.pagination = pagination
+    }
+    
+    
+    /**
+     Calculate the next page from available data
+     
+     - Returns: a newly calculated Pagination object based on the Response object
+     */
+    public func nextPage() -> Pagination? {
+        guard let page = self.pagination else { return nil }
+        
+        return Pagination(pageSize: page.pageSize, offset: page.offset + page.pageSize, sort: page.sort)
+    }
+    
+}
+
+public struct Value: IteratorProtocol, ArrayLiteralConvertible {
     /// The array that contains the transaction response objects
     public private (set) var items = [TransactionData]()
     /// Helper to count in case of Generation of elements for loops
@@ -55,20 +83,8 @@ public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLite
     public init(arrayLiteral elements: TransactionData...) {
         self.init()
         for element in elements {
-            self.append(element)
+            self.append(element: element)
         }
-    }
-    
-    
-    /**
-    Initialize a Response object with pagination if available
-    
-    - Parameter pagination: the pagination information for the response
-    
-    - Returns: a Response object
-    */
-    init(_ pagination: Pagination?) {
-        self.pagination = pagination
     }
     
     
@@ -79,18 +95,6 @@ public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLite
     */
     public mutating func append(element: TransactionData) {
         self.items.append(element)
-    }
-    
-    
-    /**
-    Calculate the next page from available data
-    
-    - Returns: a newly calculated Pagination object based on the Response object
-    */
-    public func nextPage() -> Pagination? {
-        guard let page = self.pagination else { return nil }
-        
-        return Pagination(pageSize: page.pageSize, offset: page.offset + page.pageSize, sort: page.sort)
     }
     
     // MARK: - GeneratorType
@@ -105,7 +109,7 @@ public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLite
         case _ where !items.isEmpty:
             if indexInSequence < items.count {
                 let element = items[indexInSequence]
-                indexInSequence.advancedBy(1)
+                indexInSequence = indexInSequence.advanced(by: 1)
                 return element
             }
             indexInSequence = 0
@@ -118,8 +122,8 @@ public struct Response<Value, Error: ErrorProtocol>: IteratorProtocol, ArrayLite
 }
 
 
-/// Response extensions for SequenceType and CollectionType
-extension Response: SequenceType, CollectionType {
+/// Response extensions for Sequence and Collection
+extension Value: Sequence, Collection {
     
     public typealias Index = Int
     
@@ -152,8 +156,8 @@ extension Response: SequenceType, CollectionType {
      
      - returns: an IndexingGenerator object
      */
-    public func generate() -> IndexingGenerator<[TransactionData]> {
-        return self.items.generate()
+    public func generate() -> IndexingIterator<[TransactionData]> {
+        return self.items.makeIterator()
     }
     
 }
@@ -242,7 +246,7 @@ public struct TransactionData {
             let typeString = dict["type"] as? String,
             let type = TransactionType(rawValue: typeString),
             let createdAtString = dict["createdAt"] as? String,
-            let createdAt = ISO8601DateFormatter.dateFromString(createdAtString),
+            let createdAt = ISO8601DateFormatter.date(from: createdAtString),
             let resultString = dict["result"] as? String,
             let result = TransactionResult(rawValue: resultString),
             let judoId = dict["judoId"] as? NSNumber,
@@ -277,7 +281,7 @@ public struct TransactionData {
         self.createdAt = createdAt
         self.result = result
         self.message = dict["message"] as? String
-        self.judoId = String(judoId.integerValue)
+        self.judoId = String(judoId.intValue)
         self.merchantName = merchantName
         self.appearsOnStatementAs = appearsOnStatementAs
         
@@ -365,9 +369,9 @@ public enum TransactionResult: String {
 
 
 /// Formatter for ISO8601 Dates that are returned from the webservice
-let ISO8601DateFormatter: NSDateFormatter = {
-    let dateFormatter = NSDateFormatter()
-    let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
+let ISO8601DateFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    let enUSPOSIXLocale = Locale(localeIdentifier: "en_US_POSIX")
     dateFormatter.locale = enUSPOSIXLocale
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSZZZZZ"
     return dateFormatter

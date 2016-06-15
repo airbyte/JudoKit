@@ -26,7 +26,7 @@ import Foundation
 import PassKit
 import JudoShield
 
-let JudoKitVersion = "6.2.0"
+let JudoKitVersion = "7.0.0"
 
 /**
  A method that checks if the device it is currently running on is jailbroken or not
@@ -34,8 +34,8 @@ let JudoKitVersion = "6.2.0"
  - returns: true if device is jailbroken
  */
 public func isCurrentDeviceJailbroken() -> Bool {
-    let fileManager = NSFileManager.defaultManager()
-    return fileManager.fileExistsAtPath("/private/var/lib/apt/")
+    let fileManager = FileManager.default()
+    return fileManager.fileExists(atPath: "/private/var/lib/apt/")
 }
 
 
@@ -73,7 +73,7 @@ public struct JudoKit {
             throw JudoError(.JailbrokenDeviceDisallowedError)
         }
         
-        self.judoShield.locationWithCompletion { (coordinate, error) -> Void in
+        self.judoShield.location { (coordinate, error) -> Void in
             if let _ = error as? JudoError {
                 // silently fail
             } else if CLLocationCoordinate2DIsValid(coordinate) {
@@ -81,7 +81,7 @@ public struct JudoKit {
             }
         }
         
-        self.setToken(token, secret: secret)
+        self.set(token: token, secret: secret)
     }
     
     
@@ -105,7 +105,7 @@ public struct JudoKit {
      
      - parameter enabled: true to set the SDK to sandboxed mode
      */
-    public mutating func sandboxed(enabled: Bool) {
+    public mutating func setSandboxed(enabled: Bool) {
         self.apiSession.sandboxed = enabled
     }
     
@@ -116,10 +116,10 @@ public struct JudoKit {
      - Parameter token:  a string object representing the token
      - Parameter secret: a string object representing the secret
      */
-    public mutating func setToken(token: String, secret: String) {
+    public mutating func set(token: String, secret: String) {
         let plainString = token + ":" + secret
-        let plainData = plainString.dataUsingEncoding(NSISOLatin1StringEncoding)
-        let base64String = plainData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.init(rawValue: 0))
+        let plainData = plainString.data(using: String.Encoding.isoLatin1)
+        let base64String = plainData!.base64EncodedString(NSData.Base64EncodingOptions.init(rawValue: 0))
         
         self.apiSession.authorizationHeader = "Basic " + base64String
     }
@@ -145,7 +145,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokePayment(judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response?, JudoError?) -> ()) throws {
+    public mutating func invokePayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -159,7 +159,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokePreAuth(judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response?, JudoError?) -> ()) throws {
+    public mutating func invokePreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .PreAuth, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -177,7 +177,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeRegisterCard(judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response?, JudoError?) -> ()) throws {
+    public mutating func invokeRegisterCard(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .RegisterCard, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -195,7 +195,7 @@ public struct JudoKit {
     - parameter paymentToken: The consumer and card token to make a token payment with
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeTokenPayment(judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response?, JudoError?) -> ()) throws {
+    public mutating func invokeTokenPayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response<Value, Error>) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .Payment, completion: completion, currentSession: self, cardDetails: cardDetails, paymentToken: paymentToken)
         self.initiateAndShow(judoPayViewController)
     }
@@ -211,7 +211,7 @@ public struct JudoKit {
     - parameter paymentToken: The consumer and card token to make a token payment with
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeTokenPreAuth(judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response?, JudoError?) -> ()) throws {
+    public mutating func invokeTokenPreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response<Value, Error>) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .PreAuth, completion: completion, currentSession: self, cardDetails: cardDetails, paymentToken: paymentToken)
         self.initiateAndShow(judoPayViewController)
     }
@@ -230,14 +230,14 @@ public struct JudoKit {
      
      - Returns: a Payment Object
      */
-    public func transaction(transactionType: TransactionType, judoId: String, amount: Amount, reference: Reference) throws -> Transaction {
+    public func transaction(with transactionType: TransactionType, judoId: String, amount: Amount, reference: Reference) throws -> Transaction {
         switch transactionType {
         case .Payment:
-            return try self.payment(judoId, amount: amount, reference: reference)
+            return try self.payment(with: judoId, amount: amount, reference: reference)
         case .PreAuth:
-            return try self.preAuth(judoId, amount: amount, reference: reference)
+            return try self.preAuth(with: judoId, amount: amount, reference: reference)
         case .RegisterCard:
-            return try self.registerCard(judoId, reference: reference)
+            return try self.registerCard(with: judoId, reference: reference)
         default:
             throw JudoError(.InvalidOperationError)
         }
@@ -255,7 +255,7 @@ public struct JudoKit {
      
      - Returns: a Payment Object
      */
-    public func payment(judoId: String, amount: Amount, reference: Reference) throws -> Payment {
+    public func payment(with judoId: String, amount: Amount, reference: Reference) throws -> Payment {
         return try Payment(judoId: judoId, amount: amount, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -271,7 +271,7 @@ public struct JudoKit {
      
      - Returns: pre-auth Object
      */
-    public func preAuth(judoId: String, amount: Amount, reference: Reference) throws -> PreAuth {
+    public func preAuth(with judoId: String, amount: Amount, reference: Reference) throws -> PreAuth {
         return try PreAuth(judoId: judoId, amount: amount, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -287,7 +287,7 @@ public struct JudoKit {
      
      - Returns: a RegisterCard Object
      */
-    public func registerCard(judoId: String, reference: Reference) throws -> RegisterCard {
+    public func registerCard(with judoId: String, reference: Reference) throws -> RegisterCard {
         return try RegisterCard(judoId: judoId, amount: nil, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -305,7 +305,7 @@ public struct JudoKit {
      
      - Returns: a Receipt Object for reactive usage
      */
-    public func receipt(receiptId: String? = nil) throws -> Receipt {
+    public func receipt(with receiptId: String? = nil) throws -> Receipt {
         return try Receipt(receiptId: receiptId).apiSession(self.apiSession)
     }
     
@@ -321,7 +321,7 @@ public struct JudoKit {
      
      - Returns: a Collection object for reactive usage
      */
-    public func collection(receiptId: String, amount: Amount) throws -> Collection {
+    public func collection(with receiptId: String, amount: Amount) throws -> Collection {
         return try Collection(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -337,7 +337,7 @@ public struct JudoKit {
      
      - Returns: a Refund object for reactive usage
      */
-    public func refund(receiptId: String, amount: Amount) throws -> Refund {
+    public func refund(with receiptId: String, amount: Amount) throws -> Refund {
         return try Refund(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -353,7 +353,7 @@ public struct JudoKit {
      
      - Returns: a Void object for reactive usage
      */
-    public func voidTransaction(receiptId: String, amount: Amount) throws -> VoidTransaction {
+    public func voidTransaction(with receiptId: String, amount: Amount) throws -> VoidTransaction {
         return try VoidTransaction(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
     }
     
@@ -367,7 +367,7 @@ public struct JudoKit {
      */
     public func list<T:SessionProtocol>(type: T.Type) -> T {
         var transaction = T()
-        transaction.APISession = self.apiSession
+        transaction.apiSession = self.apiSession
         return transaction
     }
     
@@ -381,8 +381,6 @@ public struct JudoKit {
     - parameter cardDetails:    optional dictionary that contains card info
     */
     mutating func initiateAndShow(viewController: JudoPayViewController) {
-//        viewController.myView.cardInputField.textField.text = cardDetails?.cardNumber
-//        viewController.myView.expiryDateInputField.textField.text = cardDetails?.formattedEndDate()
         self.activeViewController = viewController
         self.showViewController(UINavigationController(rootViewController: viewController))
     }
@@ -393,10 +391,10 @@ public struct JudoKit {
      
      - parameter vc: the viewController to show
      */
-    func showViewController(vc: UIViewController) {
-        vc.modalPresentationStyle = .FormSheet
+    func showViewController(_ vc: UIViewController) {
+        vc.modalPresentationStyle = .formSheet
        
-        var viewController = UIApplication.sharedApplication().keyWindow?.rootViewController
+        var viewController = UIApplication.shared().keyWindow?.rootViewController
         
         if let presented = viewController?.presentedViewController {
             
@@ -420,7 +418,7 @@ public struct JudoKit {
             }
         }
         
-        viewController?.presentViewController(vc, animated:true, completion:nil)
+        viewController?.present(vc, animated:true, completion:nil)
     }
     
     

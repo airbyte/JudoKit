@@ -108,7 +108,7 @@ public class CardInputField: JudoPayInputField {
      
      - parameter textField: the textfield of which the content has changed
      */
-    public override func textFieldDidChangeValue(textField: UITextField) {
+    public override func textFieldDidChangeValue(_ textField: UITextField) {
         super.textFieldDidChangeValue(textField: textField)
         
         self.didChangeInputText()
@@ -128,7 +128,8 @@ public class CardInputField: JudoPayInputField {
                 self.delegate?.cardInput(self, didFindValidNumber: textField.text!)
                 self.dismissError()
             } else {
-                self.delegate?.cardInput(self, error: JudoError(.InvalidCardNumber, "Check card number"))
+                
+                self.delegate?.cardInput(self, error: JudoError(.InvalidCardNumber, message: "Check card number"))
             }
         }
         

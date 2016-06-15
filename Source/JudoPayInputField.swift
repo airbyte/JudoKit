@@ -57,7 +57,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      */
     public init(theme: Theme) {
         self.theme = theme
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.setupView()
     }
     
@@ -71,7 +71,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      */
     override public init(frame: CGRect) {
         self.theme = Theme()
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.setupView()
     }
     
@@ -84,7 +84,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      - returns: a JudoPayInputField instance
      */
     convenience required public init?(coder aDecoder: NSCoder) {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
     
     
@@ -226,7 +226,7 @@ extension JudoPayInputField: JudoInputType {
      
      - parameter textField: the textfield of which the content has changed
      */
-    public func textFieldDidChangeValue(textField: UITextField) {
+    public func textFieldDidChangeValue(_ textField: UITextField) {
         self.dismissError()
         // Method for subclassing
     }

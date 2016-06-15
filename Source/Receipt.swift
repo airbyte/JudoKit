@@ -56,7 +56,7 @@ public class Receipt {
     /// the receipt ID - nil for a list of all receipts
     private (set) var receiptId: String?
     /// The current Session to access the Judo API
-    public var APISession: Session?
+    public var apiSession: Session?
     
     /**
     Initialization for a Receipt Object
@@ -88,7 +88,7 @@ public class Receipt {
      - Returns: reactive self
      */
     public func apiSession(session: Session) -> Self {
-        self.APISession = session
+        self.apiSession = session
         return self
     }
     
@@ -100,14 +100,14 @@ public class Receipt {
     
     - Returns: reactive self
     */
-    public func completion(block: JudoCompletionBlock) -> Self {
+    public func completion(block: (Result<Value, Error>) -> ()) -> Self {
         var path = "transactions"
 
         if let rec = self.receiptId {
             path += "/\(rec)"
         }
         
-        self.APISession?.GET(path, parameters: nil) { (dictionary, error) -> () in
+        self.apiSession?.GET(path, parameters: nil) { (dictionary, error) -> () in
             block(dictionary, error)
         }
         return self
@@ -122,9 +122,9 @@ public class Receipt {
     - Parameter pagination: The offset, number of items and order in which to return the items
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(pagination: Pagination, block: JudoCompletionBlock) {
+    public func list(pagination: Pagination, block: (Result<Value, Error>) -> ()) {
         let path = "transactions?pageSize=\(pagination.pageSize)&offset=\(pagination.offset)&sort=\(pagination.sort.rawValue)"
-        self.APISession?.GET(path, parameters: nil) { (dictionary, error) -> () in
+        self.apiSession?.GET(path, parameters: nil) { (dictionary, error) -> () in
             block(dictionary, error)
         }
     }

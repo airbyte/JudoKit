@@ -36,7 +36,7 @@ public protocol TransactionPath {
 public protocol SessionProtocol {
     
     /// the current API Session
-    var APISession: Session? { get set }
+    var apiSession: Session? { get set }
     
     /**
      a method to set the API session in a fluent way
@@ -45,7 +45,7 @@ public protocol SessionProtocol {
      
      - returns: Self
      */
-    func apiSession(session: Session) -> Self
+    func set(session: Session) -> Self
     
     /**
      designated initializer
@@ -64,7 +64,7 @@ public class Transaction: SessionProtocol {
     internal var parameters = [String:AnyObject]();
     
     /// The current Session to access the Judo API
-    public var APISession: Session?
+    public var apiSession: Session?
     
     /// The judo ID for the transaction
     public private (set) var judoId: String {
@@ -118,7 +118,7 @@ public class Transaction: SessionProtocol {
     public private (set) var location: CLLocationCoordinate2D? {
         didSet {
             guard let location = location else { return }
-            self.parameters["consumerLocation"] = ["latitude":NSNumber(double: location.latitude), "longitude":NSNumber(double: location.longitude)]
+            self.parameters["consumerLocation"] = ["latitude":NSNumber(value: location.latitude), "longitude":NSNumber(value: location.longitude)]
         }
     }
     
@@ -159,7 +159,7 @@ public class Transaction: SessionProtocol {
                 tokenDict["paymentNetwork"] = pkPayment.token.paymentNetwork
             }
             do {
-                tokenDict["paymentData"] = try NSJSONSerialization.JSONObjectWithData(pkPayment.token.paymentData, options: NSJSONReadingOptions.MutableLeaves) as? JSONDictionary
+                tokenDict["paymentData"] = try JSONSerialization.jsonObject(with: pkPayment.token.paymentData, options: JSONSerialization.ReadingOptions.mutableLeaves) as? JSONDictionary
             } catch {
                 // Allow empty paymentData on simulator for test cards
                 #if !(arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
@@ -317,8 +317,8 @@ public class Transaction: SessionProtocol {
      
      - Returns: reactive self
      */
-    public func apiSession(session: Session) -> Self {
-        self.APISession = session
+    public func set(session: Session) -> Self {
+        self.apiSession = session
         return self
     }
     
@@ -336,7 +336,7 @@ public class Transaction: SessionProtocol {
     - Throws: AmountMissingError no amount has been provided
     - Throws: DuplicateTransactionError please provide a new Reference object if this transaction is not a duplicate
     */
-    public func completion(block: JudoCompletionBlock) throws -> Self {
+    public func completion(block: (Response<Value, Error>) -> ()) throws -> Self {
         
         if self.card != nil && self.payToken != nil {
             throw JudoError(.CardAndTokenError)
@@ -353,7 +353,7 @@ public class Transaction: SessionProtocol {
         }
         self.currentTransactionReference = self.reference.yourPaymentReference
         
-        self.APISession?.POST(self.path(), parameters: self.parameters, completion: block)
+        self.apiSession?.POST(self.path(), parameters: self.parameters, completion: block)
         
         return self
     }
@@ -368,7 +368,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func threeDSecure(dictionary: JSONDictionary, receiptId: String, block: JudoCompletionBlock) -> Self {
+    public func threeDSecure(dictionary: JSONDictionary, receiptId: String, block: (Response<Value, Error>) -> ()) -> Self {
         
         var paymentDetails = JSONDictionary()
         
@@ -382,7 +382,7 @@ public class Transaction: SessionProtocol {
         
         paymentDetails["receiptId"] = receiptId
         
-        self.APISession?.PUT("transactions/" + receiptId, parameters: paymentDetails, completion: block)
+        self.apiSession?.PUT("transactions/" + receiptId, parameters: paymentDetails, completion: block)
 
         return self
     }
@@ -395,7 +395,7 @@ public class Transaction: SessionProtocol {
     
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(block: JudoCompletionBlock) {
+    public func list(block: (Response<Value, Error>) -> ()) {
         self.list(nil, block: block)
     }
     
@@ -408,12 +408,12 @@ public class Transaction: SessionProtocol {
     - Parameter pagination: The offset, number of items and order in which to return the items
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(pagination: Pagination?, block: JudoCompletionBlock) {
+    public func list(pagination: Pagination?, block: (Response<Value, Error>) -> ()) {
         var path = self.path()
         if let pag = pagination {
             path = path + "?pageSize=\(pag.pageSize)&offset=\(pag.offset)&sort=\(pag.sort.rawValue)"
         }
-        self.APISession?.GET(path, parameters: nil, completion: block)
+        self.apiSession?.GET(path, parameters: nil, completion: block)
     }
     
     

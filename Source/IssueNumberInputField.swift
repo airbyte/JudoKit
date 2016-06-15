@@ -50,7 +50,10 @@ public class IssueNumberInputField: JudoPayInputField {
         
         // Get old and new text
         let oldString = textField.text!
-        let newString = (oldString as NSString).stringByReplacingCharactersInRange(range, withString: string)
+        
+        guard let indexedRange = oldString.range(from: range) else { return false }
+        
+        let newString = oldString.replacingCharacters(in: indexedRange, with: string)
         
         if newString.characters.count == 0 {
             return true
@@ -77,8 +80,8 @@ public class IssueNumberInputField: JudoPayInputField {
      
      - parameter textField: the textfield of which the content has changed
      */
-    public override func textFieldDidChangeValue(textField: UITextField) {
-        super.textFieldDidChangeValue(textField)
+    public override func textFieldDidChangeValue(_ textField: UITextField) {
+        super.textFieldDidChangeValue(textField: textField)
         
         self.didChangeInputText()
         
@@ -93,8 +96,8 @@ public class IssueNumberInputField: JudoPayInputField {
      
      - returns: an Attributed String that is the placeholder of the receiver
      */
-    public override func placeholder() -> NSAttributedString? {
-        return NSAttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName:self.theme.getPlaceholderTextColor()])
+    public override func placeholder() -> AttributedString? {
+        return AttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName:self.theme.getPlaceholderTextColor()])
     }
     
     

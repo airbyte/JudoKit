@@ -39,9 +39,9 @@ public class PostCodeInputField: JudoPayInputField {
         didSet {
             switch billingCountry {
             case .UK, .Canada:
-                self.textField.keyboardType = .Default
+                self.textField.keyboardType = .default
             default:
-                self.textField.keyboardType = .NumberPad
+                self.textField.keyboardType = .numberPad
             }
             self.textField.placeholder = "Billing " + self.billingCountry.titleDescription()
         }
@@ -49,9 +49,9 @@ public class PostCodeInputField: JudoPayInputField {
     
     override func setupView() {
         super.setupView()
-        self.textField.keyboardType = .Default
-        self.textField.autocapitalizationType = .AllCharacters
-        self.textField.autocorrectionType = .No
+        self.textField.keyboardType = .default
+        self.textField.autocapitalizationType = .allCharacters
+        self.textField.autocorrectionType = .no
     }
     
     
@@ -101,11 +101,11 @@ public class PostCodeInputField: JudoPayInputField {
         if self.billingCountry == .Other {
             return true
         }
-        guard let newString = self.textField.text?.uppercaseString else { return false }
+        guard let newString = self.textField.text?.uppercased() else { return false }
         
-        let usaRegex = try! NSRegularExpression(pattern: kUSARegexString, options: .AnchorsMatchLines)
-        let ukRegex = try! NSRegularExpression(pattern: kUKRegexString, options: .AnchorsMatchLines)
-        let canadaRegex = try! NSRegularExpression(pattern: kCanadaRegexString, options: .AnchorsMatchLines)
+        let usaRegex = try! RegularExpression(pattern: kUSARegexString, options: .AnchorsMatchLines)
+        let ukRegex = try! RegularExpression(pattern: kUKRegexString, options: .AnchorsMatchLines)
+        let canadaRegex = try! RegularExpression(pattern: kCanadaRegexString, options: .AnchorsMatchLines)
         
         switch billingCountry {
         case .UK:
@@ -125,8 +125,8 @@ public class PostCodeInputField: JudoPayInputField {
      
      - parameter textField: The text field of which the content has changed
      */
-    public override func textFieldDidChangeValue(textField: UITextField) {
-        super.textFieldDidChangeValue(textField)
+    public override func textFieldDidChangeValue(_ textField: UITextField) {
+        super.textField(didChangeValue: textField)
         
         self.didChangeInputText()
         
@@ -139,7 +139,7 @@ public class PostCodeInputField: JudoPayInputField {
             switch billingCountry {
             case .UK where characterCount >= 7, .Canada where characterCount >= 6:
                 self.errorAnimation(true)
-                self.delegate?.postCodeInputField(self, didEnterInvalidPostCodeWithError: JudoError(.InvalidPostCode, "Check " + self.billingCountry.titleDescription()))
+                self.delegate?.postCodeInputField(self, didEnterInvalidPostCodeWithError: JudoError(.InvalidPostCode, message: "Check " + self.billingCountry.titleDescription()))
             default:
                 return
             }

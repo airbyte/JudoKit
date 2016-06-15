@@ -74,7 +74,7 @@ public struct JudoError: ErrorProtocol {
      
      - returns: a JudoError object
      */
-    public init(_ code: JudoErrorCode, dict: JSONDictionary? = nil, _ message: String? = nil, _ category: JudoErrorCategory? = nil, details: [JudoModelError]? = nil, bridgedError: NSError? = nil) {
+    public init(_ code: JudoErrorCode, dict: JSONDictionary? = nil, message: String? = nil, category: JudoErrorCategory? = nil, details: [JudoModelError]? = nil, bridgedError: NSError? = nil) {
         if let dict = dict {
             let errorCode = dict["code"]
             let errorMessage = dict["message"]
