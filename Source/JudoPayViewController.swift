@@ -54,7 +54,7 @@ public class JudoPayViewController: UIViewController {
     private var pending3DSReceiptID: String?
     
     // MARK: completion blocks
-    private var completionBlock: (Response<Value, Error>) -> ()
+    private var completionBlock: ((Response<Value, JudoError>) -> ())?
     
     
     /// The overridden view object forwarding to a JudoPayView
@@ -87,7 +87,7 @@ public class JudoPayViewController: UIViewController {
      
      - returns: a JPayViewController object for presentation on a view stack
      */
-    public init(judoId: String, amount: Amount, reference: Reference, transactionType: TransactionType = .Payment, completion: (Response<Value, Error>) -> (), currentSession: JudoKit, cardDetails: CardDetails? = nil, paymentToken: PaymentToken? = nil)  throws {
+    public init(judoId: String, amount: Amount, reference: Reference, transactionType: TransactionType = .Payment, completion: (Response<Value, JudoError>) -> (), currentSession: JudoKit, cardDetails: CardDetails? = nil, paymentToken: PaymentToken? = nil)  throws {
         self.judoId = judoId
         self.amount = amount
         self.reference = reference
@@ -215,7 +215,7 @@ public class JudoPayViewController: UIViewController {
     */
     func payButtonAction(sender: AnyObject) {
         guard let reference = self.reference, let amount = self.amount, let judoId = self.judoId else {
-            self.completionBlock?(nil, JudoError(.ParameterError))
+            self.completionBlock?(Response(nil, JudoError(.ParameterError)))
             return // BAIL
         }
         
@@ -225,7 +225,7 @@ public class JudoPayViewController: UIViewController {
         self.myView.loadingView.startAnimating()
         
         do {
-            let transaction = try self.judoKitSession.transaction(self.myView.transactionType, judoId: judoId, amount: amount, reference: reference)
+            let transaction = try self.judoKitSession.transaction(with: self.myView.transactionType, judoId: judoId, amount: amount, reference: reference)
             
             if var payToken = self.paymentToken {
                 payToken.cv2 = self.myView.secureCodeInputField.textField.text
@@ -284,10 +284,10 @@ public class JudoPayViewController: UIViewController {
             })
             
         } catch let error as JudoError {
-            self.completionBlock?(nil, error)
+            self.completionBlock?(Response(nil, error))
             self.myView.loadingView.stopAnimating()
         } catch {
-            self.completionBlock?(nil, JudoError(.Unknown))
+            self.completionBlock?(Response(nil, JudoError(.Unknown)))
             self.myView.loadingView.stopAnimating()
         }
     }
@@ -299,7 +299,7 @@ public class JudoPayViewController: UIViewController {
      - parameter sender: the button
      */
     func doneButtonAction(sender: UIBarButtonItem) {
-        self.completionBlock?(nil, JudoError(.UserDidCancel))
+        self.completionBlock?(Response(nil, JudoError(.UserDidCancel)))
     }
     
 }
@@ -318,23 +318,23 @@ extension JudoPayViewController: UIWebViewDelegate {
      - returns: return whether webView should start loading the request
      */
     public func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        let urlString = request.URL?.absoluteString
+        let urlString = request.url?.absoluteString
         
-        if let urlString = urlString where urlString.rangeOfString("Parse3DS") != nil {
+        if let urlString = urlString where urlString.range(of: "Parse3DS") != nil {
             guard let body = request.httpBody,
-                let bodyString = NSString(data: body, encoding: String.Encoding.utf8.rawValue) else {
+                let bodyString = String(data: body, encoding: String.Encoding.utf8) else {
                     self.completionBlock?(nil, JudoError(.Failed3DSError))
                     return false
             }
             
             var results = JSONDictionary()
-            let pairs = bodyString.componentsSeparated(by: "&")
+            let pairs = bodyString.components(separatedBy: "&")
             
             for pair in pairs {
-                if pair.rangeOf("=") != nil {
-                    let components = pair.componentsSeparated(by: "=")
+                if pair.range(of: "=") != nil {
+                    let components = pair.components(separatedBy: "=")
                     let value = components[1]
-                    let escapedVal = value.stringByRemovingPercentEncoding
+                    let escapedVal = value.removingPercentEncoding
                     
                     results[components[0]] = escapedVal
                 }
@@ -362,10 +362,10 @@ extension JudoPayViewController: UIWebViewDelegate {
                 self.completionBlock?(nil, JudoError(.Unknown))
             }
             
-            UIView.animateWithDuration(0.3, animations: { () -> Void in
+            UIView.animate(withDuration: 0.3, animations: { () -> Void in
                 self.myView.threeDSecureWebView.alpha = 0.0
                 }, completion: { (didFinish) -> Void in
-                    self.myView.threeDSecureWebView.loadRequest(NSURLRequest(URL: NSURL(string: "about:blank")!))
+                    self.myView.threeDSecureWebView.loadRequest(URLRequest(url: URL(string: "about:blank")!))
             })
             return false
         }
@@ -380,7 +380,7 @@ extension JudoPayViewController: UIWebViewDelegate {
      */
     public func webViewDidFinishLoad(_ webView: UIWebView) {
         var alphaVal: CGFloat = 1.0
-        if webView.request?.URL?.absoluteString == "about:blank" {
+        if webView.request?.url?.absoluteString == "about:blank" {
             alphaVal = 0.0
         }
         UIView.animate(withDuration: 0.5, animations: { () -> Void in
@@ -396,8 +396,8 @@ extension JudoPayViewController: UIWebViewDelegate {
      - parameter webView: The web view
      - parameter error:   The error
      */
-    public func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
-        UIView.animateWithDuration(0.5, animations: { () -> Void in
+    public func webView(_ webView: UIWebView, didFailLoadWithError error: NSError?) {
+        UIView.animate(withDuration: 0.5, animations: { () -> Void in
             self.myView.threeDSecureWebView.alpha = 0.0
             self.myView.loadingView.stopAnimating()
         })

@@ -145,7 +145,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokePayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
+    public mutating func invokePayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -159,7 +159,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokePreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
+    public mutating func invokePreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .PreAuth, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -177,7 +177,7 @@ public struct JudoKit {
     - parameter reference:    Reference object that holds consumer and payment reference and a meta data dictionary which can hold any kind of JSON formatted information
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeRegisterCard(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response<Value, Error>) -> ()) throws {
+    public mutating func invokeRegisterCard(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails? = nil, completion: (Response) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .RegisterCard, completion: completion, currentSession: self, cardDetails: cardDetails)
         self.initiateAndShow(judoPayViewController)
     }
@@ -195,7 +195,7 @@ public struct JudoKit {
     - parameter paymentToken: The consumer and card token to make a token payment with
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeTokenPayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response<Value, Error>) -> ()) throws {
+    public mutating func invokeTokenPayment(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .Payment, completion: completion, currentSession: self, cardDetails: cardDetails, paymentToken: paymentToken)
         self.initiateAndShow(judoPayViewController)
     }
@@ -211,7 +211,7 @@ public struct JudoKit {
     - parameter paymentToken: The consumer and card token to make a token payment with
     - parameter completion:   The completion handler which will respond with a Response Object or an NSError
     */
-    public mutating func invokeTokenPreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response<Value, Error>) -> ()) throws {
+    public mutating func invokeTokenPreAuth(with judoId: String, amount: Amount, reference: Reference, cardDetails: CardDetails, paymentToken: PaymentToken, completion: (Response) -> ()) throws {
         let judoPayViewController = try JudoPayViewController(judoId: judoId, amount: amount, reference: reference, transactionType: .PreAuth, completion: completion, currentSession: self, cardDetails: cardDetails, paymentToken: paymentToken)
         self.initiateAndShow(judoPayViewController)
     }

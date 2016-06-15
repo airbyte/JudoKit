@@ -98,7 +98,7 @@ public class TransactionProcess {
      
      - Returns: reactive self
      */
-    public func completion(block: (Result<Value, Error>) -> ()) -> Self {
+    public func completion(block: (Result) -> ()) -> Self {
         
         guard let parameters = self.apiSession?.progressionParameters(self.receiptId, amount: self.amount, paymentReference: self.paymentReference, deviceSignal: self.deviceSignal) else { return self }
         

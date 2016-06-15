@@ -100,7 +100,7 @@ public class Receipt {
     
     - Returns: reactive self
     */
-    public func completion(block: (Result<Value, Error>) -> ()) -> Self {
+    public func completion(block: (Result) -> ()) -> Self {
         var path = "transactions"
 
         if let rec = self.receiptId {
@@ -122,7 +122,7 @@ public class Receipt {
     - Parameter pagination: The offset, number of items and order in which to return the items
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(pagination: Pagination, block: (Result<Value, Error>) -> ()) {
+    public func list(pagination: Pagination, block: (Result) -> ()) {
         let path = "transactions?pageSize=\(pagination.pageSize)&offset=\(pagination.offset)&sort=\(pagination.sort.rawValue)"
         self.apiSession?.GET(path, parameters: nil) { (dictionary, error) -> () in
             block(dictionary, error)

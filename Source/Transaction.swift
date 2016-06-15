@@ -336,7 +336,7 @@ public class Transaction: SessionProtocol {
     - Throws: AmountMissingError no amount has been provided
     - Throws: DuplicateTransactionError please provide a new Reference object if this transaction is not a duplicate
     */
-    public func completion(block: (Response<Value, Error>) -> ()) throws -> Self {
+    public func completion(block: (Response) -> ()) throws -> Self {
         
         if self.card != nil && self.payToken != nil {
             throw JudoError(.CardAndTokenError)
@@ -368,7 +368,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func threeDSecure(dictionary: JSONDictionary, receiptId: String, block: (Response<Value, Error>) -> ()) -> Self {
+    public func threeDSecure(dictionary: JSONDictionary, receiptId: String, block: (Response) -> ()) -> Self {
         
         var paymentDetails = JSONDictionary()
         
@@ -395,7 +395,7 @@ public class Transaction: SessionProtocol {
     
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(block: (Response<Value, Error>) -> ()) {
+    public func list(block: (Response) -> ()) {
         self.list(nil, block: block)
     }
     
@@ -408,7 +408,7 @@ public class Transaction: SessionProtocol {
     - Parameter pagination: The offset, number of items and order in which to return the items
     - Parameter block: a completion block that is called when the request finishes
     */
-    public func list(pagination: Pagination?, block: (Response<Value, Error>) -> ()) {
+    public func list(pagination: Pagination?, block: (Response) -> ()) {
         var path = self.path()
         if let pag = pagination {
             path = path + "?pageSize=\(pag.pageSize)&offset=\(pag.offset)&sort=\(pag.sort.rawValue)"

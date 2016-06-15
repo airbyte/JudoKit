@@ -36,9 +36,13 @@ import Foundation
  
  
 */
-public struct Response<Value, Error: ErrorProtocol> {
+public struct Response {
     /// The current pagination response
     public let pagination: Pagination?
+    
+    public var value: Value?
+    
+    public let error: JudoError?
     
     
     /**
@@ -50,6 +54,21 @@ public struct Response<Value, Error: ErrorProtocol> {
      */
     init(_ pagination: Pagination?) {
         self.pagination = pagination
+        self.value = Value()
+    }
+    
+    
+    /**
+     Initialize a Response object with a value and error if available
+     
+     - Parameter value: an object that holds transactionData objects
+     - Parameter error: an error object which describes the failure that happened
+     
+     - Returns: a Response object
+     */
+    init(_ value: Value? = nil, error: JudoError? = nil) {
+        self.value = value
+        self.error = error
     }
     
     
@@ -109,7 +128,7 @@ public struct Value: IteratorProtocol, ArrayLiteralConvertible {
         case _ where !items.isEmpty:
             if indexInSequence < items.count {
                 let element = items[indexInSequence]
-                indexInSequence = indexInSequence.advanced(by: 1)
+                indexInSequence += 1
                 return element
             }
             indexInSequence = 0
@@ -159,6 +178,20 @@ extension Value: Sequence, Collection {
     public func generate() -> IndexingIterator<[TransactionData]> {
         return self.items.makeIterator()
     }
+    
+    
+    /// Returns the position immediately after the given index.
+    ///
+    /// - Parameter i: A valid index of the collection. `i` must be less than
+    ///   `endIndex`.
+    /// - Returns: The index value immediately after `i`.
+    public func index(after i: Int) -> Int {
+        if i < items.count {
+            return i + 1
+        }
+        return 0
+    }
+    
     
 }
 

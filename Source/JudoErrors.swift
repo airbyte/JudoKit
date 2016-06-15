@@ -142,7 +142,7 @@ public struct JudoError: ErrorProtocol {
      
      - returns: a JudoError object
      */
-    public static func fromNSError(error: NSError) -> JudoError {
+    public static func from(NSError: NSError) -> JudoError {
         if let judoErrorCode = JudoErrorCode(rawValue: error.code) {
             return JudoError(judoErrorCode, dict: error.userInfo as? JSONDictionary)
         } else {

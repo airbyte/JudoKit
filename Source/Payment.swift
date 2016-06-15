@@ -83,7 +83,7 @@ public class Payment: Transaction, TransactionPath {
     
     - Returns: reactive Self
     */
-    public func validate(block: ((Result<Value, Error>) -> ())) throws -> Self {
+    public func validate(block: ((Result) -> ())) throws -> Self {
         if (self.card != nil && self.payToken != nil) {
             throw JudoError(.CardAndTokenError)
         } else if self.card == nil && self.payToken == nil {
