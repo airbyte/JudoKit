@@ -35,7 +35,7 @@ import UIKit
 public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
     
     /// The delegate for the input field validation methods
-    public var delegate: JudoPayInputDelegate?
+    public weak var delegate: JudoPayInputDelegate?
     
     /// the theme of the current judoKit session
     public var theme: Theme
@@ -113,7 +113,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
         self.textField.font = UIFont.boldSystemFont(ofSize: 14)
         self.textField.addTarget(self, action: Selector("JudoInputType.textFieldDidChangeValue(textField:)"), for: .editingChanged)
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[text]|", options: .alignAllLastBaseline, metrics: nil, views: ["text":textField]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[text]|", options: .alignAllCenterX, metrics: nil, views: ["text":textField]))
         
         self.set(active: false)
         

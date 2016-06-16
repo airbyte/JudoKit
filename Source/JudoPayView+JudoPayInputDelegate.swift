@@ -112,7 +112,7 @@ extension JudoPayView: JudoPayInputDelegate {
     - parameter input:       The issueNumberInputField calling the delegate method
     - parameter issueNumber: The issue number that has been entered as a String
     */
-    public func issueNumberInputFieldDidEnterCode(_ inputField: IssueNumberInputField, issueNumber: String) {
+    public func issueNumberInputField(_ inputField: IssueNumberInputField, didEnterIssueNumber issueNumber: String) {
         if issueNumber.characters.count == 3 {
             self.expiryDateInputField.textField.becomeFirstResponder()
         }
@@ -127,7 +127,7 @@ extension JudoPayView: JudoPayInputDelegate {
     - parameter input:          The input field calling the delegate method
     - parameter billingCountry: The billing country that has been selected
     */
-    public func billingCountryInputFieldDidEnter(_ input: BillingCountryInputField, billingCountry: BillingCountry) {
+    public func billingCountryInputField(_ input: BillingCountryInputField, didEnterBillingCountry billingCountry: BillingCountry) {
         self.postCodeInputField.billingCountry = billingCountry
         self.postCodeInputField.textField.text = ""
         self.postCodeInputField.isUserInteractionEnabled = billingCountry != .Other

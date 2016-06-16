@@ -242,7 +242,7 @@ public struct TransactionData {
     /// The type of Transaction, either "Payment" or "Refund"
     public let type: TransactionType
     /// Date and time of the Transaction including time zone offset
-    public let createdAt: NSDate
+    public let createdAt: Date
     /// The result of this transactions, this will either be "Success" or "Declined"
     public let result: TransactionResult
     /// A message detailing the result.
@@ -294,7 +294,7 @@ public struct TransactionData {
                 self.receiptId = ""
                 self.yourPaymentReference = ""
                 self.type = TransactionType.Payment
-                self.createdAt = NSDate()
+                self.createdAt = Date()
                 self.result = TransactionResult.Error
                 self.message = ""
                 self.judoId = ""

@@ -73,10 +73,10 @@ enum TableViewContent : Int {
     
 }
 
-let token               = "<#YOUR TOKEN#>"
-let secret              = "<#YOUR SECRET#>"
+let token               = "hkDjZ1Sgt7ZtdHJx"
+let secret              = "607d4559c6d3b2ce1a1a3df4c48767dbe38e38eb342ca95bae25fdedf6e042ad"
 
-let judoId              = "<#YOUR JUDO-ID#>"
+let judoId              = "100972777"
 let tokenPayReference   = "<#YOUR REFERENCE#>"
 
 
@@ -103,29 +103,28 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         
         self.judoKitSession.theme.acceptedCardNetworks = [Card.Configuration(.Visa, 16), Card.Configuration(.MasterCard, 16), Card.Configuration(.Maestro, 16), Card.Configuration(.AMEX, 15)]
         
-        self.judoKitSession.sandboxed(true)
-        
+        self.judoKitSession.setSandboxed(enabled: true)
         
         self.judoKitSession.theme.showSecurityMessage = true
         
-        self.tableView.backgroundColor = UIColor.clearColor()
+        self.tableView.backgroundColor = UIColor.clear()
         
         self.tableView.tableFooterView = {
-            let view = UIView(frame: CGRectMake(0, 0, self.view.bounds.size.width, 50))
-            let label = UILabel(frame: CGRectMake(15, 15, self.view.bounds.size.width - 30, 50))
+            let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 50))
+            let label = UILabel(frame: CGRect(x: 15, y: 15, width: self.view.bounds.size.width - 30, height: 50))
             label.numberOfLines = 2
             label.text = "To view test card details:\nSign in to judo and go to Developer/Tools."
-            label.font = UIFont.systemFontOfSize(12.0)
-            label.textColor = UIColor.grayColor()
+            label.font = UIFont.systemFont(ofSize: 12.0)
+            label.textColor = UIColor.gray()
             view.addSubview(label)
             return view
             }()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let alertController = self.alertController {
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
             self.alertController = nil
         }
     }
@@ -141,7 +140,7 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         if self.settingsViewBottomConstraint.constant != 0 {
             self.view.layoutIfNeeded()
             self.settingsViewBottomConstraint.constant = 0.0
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
+            UIView.animate(withDuration: 0.5, animations: { () -> Void in
                 self.tableView.alpha = 0.2
                 self.view.layoutIfNeeded()
             })
@@ -152,7 +151,7 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         if self.settingsViewBottomConstraint.constant == 0 {
             self.view.layoutIfNeeded()
             self.settingsViewBottomConstraint.constant = -190
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
+            UIView.animate(withDuration: 0.5, animations: { () -> Void in
                 self.tableView.alpha = 1.0
                 self.view.layoutIfNeeded()
             })
@@ -160,25 +159,25 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
     }
     
     @IBAction func segmentedControlValueChange(segmentedControl: UISegmentedControl) {
-        if let selectedIndexTitle = segmentedControl.titleForSegmentAtIndex(segmentedControl.selectedSegmentIndex) {
+        if let selectedIndexTitle = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex) {
             self.currentCurrency = Currency(selectedIndexTitle)
         }
     }
     
     @IBAction func AVSValueChanged(theSwitch: UISwitch) {
-        self.judoKitSession.theme.avsEnabled = theSwitch.on
+        self.judoKitSession.theme.avsEnabled = theSwitch.isOn
     }
     
     // TODO: need to think of a way to add or remove certain card type acceptance as samples
     
     // MARK: UITableViewDataSource
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TableViewContent.count()
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(ViewController.kCellIdentifier, forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ViewController.kCellIdentifier, for: indexPath)
         cell.textLabel?.text = TableViewContent(rawValue: indexPath.row)?.title()
         cell.detailTextLabel?.text = TableViewContent(rawValue: indexPath.row)?.subtitle()
         return cell
@@ -187,8 +186,8 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
     
     // MARK: UITableViewDelegate
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         
         guard let value = TableViewContent(rawValue: indexPath.row) else {
             return
@@ -216,59 +215,59 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
     
     func paymentOperation() {
         guard let ref = Reference(consumerRef: "payment reference") else { return }
-        try! self.judoKitSession.invokePayment(judoId, amount: Amount(decimalNumber: 35, currency: currentCurrency), reference: ref, completion: { (response, error) -> () in
-            self.dismissViewControllerAnimated(true, completion: nil)
-            if let error = error {
+        try! self.judoKitSession.invokePayment(with: judoId, amount: Amount(decimalNumber: 35, currency: currentCurrency), reference: ref, completion: { (response) -> () in
+            self.dismiss(animated: true, completion: nil)
+            if let error = response.error {
                 if error.code == .UserDidCancel {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.dismiss(animated: true, completion: nil)
                     return
                 }
                 var errorTitle = "Error"
                 if let errorCategory = error.category {
                     errorTitle = errorCategory.stringValue()
                 }
-                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .Alert)
-                self.alertController!.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                self.dismissViewControllerAnimated(true, completion:nil)
+                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .alert)
+                self.alertController!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.dismiss(animated: true, completion:nil)
                 return // BAIL
             }
             
-            if let resp = response, transactionData = resp.first {
+            if let value = response.value, transactionData = value.first {
                 self.cardDetails = transactionData.cardDetails
                 self.paymentToken = transactionData.paymentToken()
             }
             let sb = UIStoryboard(name: "Main", bundle: nil)
-            let viewController = sb.instantiateViewControllerWithIdentifier("detailviewcontroller") as! DetailViewController
+            let viewController = sb.instantiateViewController(withIdentifier: "detailviewcontroller") as! DetailViewController
             viewController.response = response
             self.navigationController?.pushViewController(viewController, animated: true)
-            })
+        })
     }
     
     func preAuthOperation() {
         guard let ref = Reference(consumerRef: "payment reference") else { return }
         let amount: Amount = "2 GBP"
-        try! self.judoKitSession.invokePreAuth(judoId, amount: amount, reference: ref, completion: { (response, error) -> () in
-            self.dismissViewControllerAnimated(true, completion: nil)
-            if let error = error {
+        try! self.judoKitSession.invokePreAuth(with: judoId, amount: amount, reference: ref, completion: { (response) -> () in
+            self.dismiss(animated: true, completion: nil)
+            if let error = response.error {
                 if error.code == .UserDidCancel {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.dismiss(animated: true, completion: nil)
                     return
                 }
                 var errorTitle = "Error"
                 if let errorCategory = error.category {
                     errorTitle = errorCategory.stringValue()
                 }
-                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .Alert)
-                self.alertController!.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                self.dismissViewControllerAnimated(true, completion:nil)
+                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .alert)
+                self.alertController!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.dismiss(animated: true, completion:nil)
                 return // BAIL
             }
-            if let resp = response, transactionData = resp.items.first {
+            if let value = response.value, transactionData = value.first {
                 self.cardDetails = transactionData.cardDetails
                 self.paymentToken = transactionData.paymentToken()
             }
             let sb = UIStoryboard(name: "Main", bundle: nil)
-            let viewController = sb.instantiateViewControllerWithIdentifier("detailviewcontroller") as! DetailViewController
+            let viewController = sb.instantiateViewController(withIdentifier: "detailviewcontroller") as! DetailViewController
             viewController.response = response
             self.navigationController?.pushViewController(viewController, animated: true)
             })
@@ -276,23 +275,23 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
     
     func createCardTokenOperation() {
         guard let ref = Reference(consumerRef: "payment reference") else { return }
-        try! self.judoKitSession.invokeRegisterCard(judoId, amount: Amount(decimalNumber: 1, currency: currentCurrency), reference: ref, completion: { (response, error) -> () in
-            self.dismissViewControllerAnimated(true, completion: nil)
-            if let error = error {
+        try! self.judoKitSession.invokeRegisterCard(with: judoId, amount: Amount(decimalNumber: 1, currency: currentCurrency), reference: ref, completion: { (response) -> () in
+            self.dismiss(animated: true, completion: nil)
+            if let error = response.error {
                 if error.code == .UserDidCancel {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.dismiss(animated: true, completion: nil)
                     return
                 }
                 var errorTitle = "Error"
                 if let errorCategory = error.category {
                     errorTitle = errorCategory.stringValue()
                 }
-                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .Alert)
-                self.alertController!.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                self.dismissViewControllerAnimated(true, completion:nil)
+                self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .alert)
+                self.alertController!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.dismiss(animated: true, completion:nil)
                 return // BAIL
             }
-            if let resp = response, transactionData = resp.items.first {
+            if let value = response.value, transactionData = value.first {
                 self.cardDetails = transactionData.cardDetails
                 self.paymentToken = transactionData.paymentToken()
             }
@@ -301,69 +300,69 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
     
     func repeatPaymentOperation() {
         if let cardDetails = self.cardDetails, let payToken = self.paymentToken, let ref = Reference(consumerRef: "payment reference") {
-            try! self.judoKitSession.invokeTokenPayment(judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref, cardDetails: cardDetails, paymentToken: payToken, completion: { (response, error) -> () in
-                self.dismissViewControllerAnimated(true, completion: nil)
-                if let error = error {
+            try! self.judoKitSession.invokeTokenPayment(with: judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref, cardDetails: cardDetails, paymentToken: payToken, completion: { (response) -> () in
+                self.dismiss(animated: true, completion: nil)
+                if let error = response.error {
                     if error.code == .UserDidCancel {
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                         return
                     }
                     var errorTitle = "Error"
                     if let errorCategory = error.category {
                         errorTitle = errorCategory.stringValue()
                     }
-                    self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .Alert)
-                    self.alertController!.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                    self.dismissViewControllerAnimated(true, completion:nil)
+                    self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .alert)
+                    self.alertController!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                    self.dismiss(animated: true, completion:nil)
                     return // BAIL
                 }
-                if let resp = response, transactionData = resp.items.first {
+                if let value = response.value, transactionData = value.first {
                     self.cardDetails = transactionData.cardDetails
                     self.paymentToken = transactionData.paymentToken()
                 }
                 let sb = UIStoryboard(name: "Main", bundle: nil)
-                let viewController = sb.instantiateViewControllerWithIdentifier("detailviewcontroller") as! DetailViewController
+                let viewController = sb.instantiateViewController(withIdentifier: "detailviewcontroller") as! DetailViewController
                 viewController.response = response
                 self.navigationController?.pushViewController(viewController, animated: true)
             })
         } else {
-            let alert = UIAlertController(title: "Error", message: "you need to create a card token before making a repeat payment or preauth operation", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: "Error", message: "you need to create a card token before making a repeat payment or preauth operation", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
     func repeatPreAuthOperation() {
         if let cardDetails = self.cardDetails, let payToken = self.paymentToken, let ref = Reference(consumerRef: "payment reference") {
-            try! self.judoKitSession.invokeTokenPreAuth(judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref, cardDetails: cardDetails, paymentToken: payToken, completion: { (response, error) -> () in
-                self.dismissViewControllerAnimated(true, completion: nil)
-                if let error = error {
+            try! self.judoKitSession.invokeTokenPreAuth(with: judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref, cardDetails: cardDetails, paymentToken: payToken, completion: { (response) -> () in
+                self.dismiss(animated: true, completion: nil)
+                if let error = response.error {
                     if error.code == .UserDidCancel {
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                         return
                     }
                     var errorTitle = "Error"
                     if let errorCategory = error.category {
                         errorTitle = errorCategory.stringValue()
                     }
-                    self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .Alert)
-                    self.alertController!.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                    self.dismissViewControllerAnimated(true, completion:nil)
+                    self.alertController = UIAlertController(title: errorTitle, message: error.message, preferredStyle: .alert)
+                    self.alertController!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                    self.dismiss(animated: true, completion:nil)
                     return // BAIL
                 }
-                if let resp = response, transactionData = resp.items.first {
+                if let value = response.value, transactionData = value.first {
                     self.cardDetails = transactionData.cardDetails
                     self.paymentToken = transactionData.paymentToken()
                 }
                 let sb = UIStoryboard(name: "Main", bundle: nil)
-                let viewController = sb.instantiateViewControllerWithIdentifier("detailviewcontroller") as! DetailViewController
+                let viewController = sb.instantiateViewController(withIdentifier: "detailviewcontroller") as! DetailViewController
                 viewController.response = response
                 self.navigationController?.pushViewController(viewController, animated: true)
                 })
         } else {
-            let alert = UIAlertController(title: "Error", message: "you need to create a card token before making a repeat payment or preauth operation", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: "Error", message: "you need to create a card token before making a repeat payment or preauth operation", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -401,7 +400,7 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         /*
         we at Judo support 3DS
         */
-        paymentRequest.merchantCapabilities = PKMerchantCapability.Capability3DS
+        paymentRequest.merchantCapabilities = PKMerchantCapability.capability3DS
         
         /*
         An array of `PKPaymentSummaryItems` that we'd like to display on the
@@ -412,33 +411,33 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         paymentRequest.paymentSummaryItems = items;
         
         // Request shipping information, in this case just postal address.
-        paymentRequest.requiredShippingAddressFields = .PostalAddress
+        paymentRequest.requiredShippingAddressFields = .postalAddress
         
         // Display the view controller.
         let viewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
         viewController.delegate = self
         
-        self.presentViewController(viewController, animated: true, completion: nil)
+        self.present(viewController, animated: true, completion: nil)
     }
     
     // MARK: PKPaymentAuthorizationViewControllerDelegate
     
-    func paymentAuthorizationViewController(controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: (PKPaymentAuthorizationStatus) -> Void) {
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: (PKPaymentAuthorizationStatus) -> Void) {
         // WARNING: this can not be properly tested with the sandbox due to restrictions from Apple- if you need to test ApplePay you have to make actual valid transaction and then void them
-        let completionBlock: (Response?, JudoError?) -> () = { (response, error) -> () in
-            self.dismissViewControllerAnimated(true, completion: nil)
-            if let _ = error {
-                let alertCont = UIAlertController(title: "Error", message: "there was an error performing the operation", preferredStyle: .Alert)
-                alertCont.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                self.presentViewController(alertCont, animated: true, completion: nil)
+        let completionBlock: (Response) -> () = { (response) -> () in
+            self.dismiss(animated: true, completion: nil)
+            if let _ = response.error {
+                let alertCont = UIAlertController(title: "Error", message: "there was an error performing the operation", preferredStyle: .alert)
+                alertCont.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.present(alertCont, animated: true, completion: nil)
                 return // BAIL
             }
-            if let resp = response, transactionData = resp.items.first {
+            if let value = response.value, transactionData = value.first {
                 self.cardDetails = transactionData.cardDetails
                 self.paymentToken = transactionData.paymentToken()
             }
             let sb = UIStoryboard(name: "Main", bundle: nil)
-            let viewController = sb.instantiateViewControllerWithIdentifier("detailviewcontroller") as! DetailViewController
+            let viewController = sb.instantiateViewController(withIdentifier: "detailviewcontroller") as! DetailViewController
             viewController.response = response
             self.navigationController?.pushViewController(viewController, animated: true)
         }
@@ -446,14 +445,14 @@ class ViewController: UIViewController, PKPaymentAuthorizationViewControllerDele
         guard let ref = Reference(consumerRef: "consumer Reference") else { return }
         
         if self.isTransactingApplePayPreAuth {
-            try! self.judoKitSession.preAuth(judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref).pkPayment(payment).completion(completionBlock)
+            _ = try! self.judoKitSession.preAuth(with: judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref).set(pkPayment: payment).execute(withCompletion: completionBlock)
         } else {
-            try! self.judoKitSession.payment(judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref).pkPayment(payment).completion(completionBlock)
+            _ = try! self.judoKitSession.payment(with: judoId, amount: Amount(decimalNumber: 30, currency: currentCurrency), reference: ref).set(pkPayment: payment).execute(withCompletion: completionBlock)
         }
     }
     
-    func paymentAuthorizationViewControllerDidFinish(controller: PKPaymentAuthorizationViewController) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

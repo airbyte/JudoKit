@@ -62,11 +62,12 @@ public extension String {
         // 1. Filter out networks that don't match the entered card numbers
         // 2. Map all remaining strings while removing all optional values
         // 3. Check if the current string has already passed any valid card number lengths
-        var patterns = configurations.filter({ $0.cardNetwork == cardNetwork }).flatMap({ $0.patternString() })
+        let patterns = configurations.filter({ $0.cardNetwork == cardNetwork }).flatMap({ $0.patternString() })
         
         let cardLengthMatchedPatterns = patterns.filter({ $0.strippedWhitespaces.characters.count >= strippedSelf.characters.count })
         
-        if cardLengthMatchedPatterns.count == 0 {
+        // Retrieve the shortest pattern that is left and start moving the characters across
+        guard let patternString = cardLengthMatchedPatterns.sorted(isOrderedBefore: <).first else {
             // If no patterns are left - the entered number is invalid
             var message = "We do not accept "
             if cardLengthMatchedPatterns.count != patterns.count {
@@ -77,20 +78,13 @@ public extension String {
             throw JudoError(.InvalidCardNetwork, message: message)
         }
         
-        // Retrieve the shortest pattern that is left and start moving the characters across
-        let patternString = patterns.sorted(isOrderedBefore: <)[0]
-        
-        var patternIndex = patternString.startIndex
-        
         var retString = ""
         
-        for element in strippedSelf.characters {
-            if patternString.characters[patternIndex] == "X" {
-                patternIndex = patternIndex.advancedBy(1)
+        for element in patternString.characters {
+            if element == "X" {
                 retString = retString + String(element)
             } else {
-                patternIndex = patternIndex.advancedBy(2)
-                retString = retString + " \(element)"
+                retString = retString + " "
             }
         }
         
