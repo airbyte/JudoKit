@@ -237,7 +237,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func card(card: Card) -> Self {
+    public func set(card: Card) -> Self {
         self.card = card
         return self
     }
@@ -250,8 +250,8 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func paymentToken(token: PaymentToken) -> Self {
-        self.payToken = token
+    public func set(paymentToken: PaymentToken) -> Self {
+        self.payToken = paymentToken
         return self
     }
     
@@ -263,7 +263,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func location(location: CLLocationCoordinate2D) -> Self {
+    public func set(location: CLLocationCoordinate2D) -> Self {
         self.location = location
         return self
     }
@@ -276,7 +276,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func deviceSignal(deviceSignal: JSONDictionary) -> Self {
+    public func set(deviceSignal: JSONDictionary) -> Self {
         self.deviceSignal = deviceSignal
         return self
     }
@@ -290,7 +290,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func contact(mobileNumber : String?, _ emailAddress : String? = nil) -> Self {
+    public func set(mobileNumber : String?, emailAddress : String? = nil) -> Self {
         self.mobileNumber = mobileNumber
         self.emailAddress = emailAddress
         return self
@@ -304,8 +304,8 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func pkPayment(payment: PKPayment) -> Self {
-        self.pkPayment = payment
+    public func set(pkPayment: PKPayment) -> Self {
+        self.pkPayment = pkPayment
         return self
     }
     
@@ -336,7 +336,7 @@ public class Transaction: SessionProtocol {
     - Throws: AmountMissingError no amount has been provided
     - Throws: DuplicateTransactionError please provide a new Reference object if this transaction is not a duplicate
     */
-    public func completion(block: (Response) -> ()) throws -> Self {
+    public func execute(withCompletion block: (Response) -> ()) throws -> Self {
         
         if self.card != nil && self.payToken != nil {
             throw JudoError(.CardAndTokenError)
@@ -368,7 +368,7 @@ public class Transaction: SessionProtocol {
     
     - Returns: reactive self
     */
-    public func threeDSecure(dictionary: JSONDictionary, receiptId: String, block: (Response) -> ()) -> Self {
+    public func threeDSecureCall(with dictionary: JSONDictionary, receiptId: String, block: (Response) -> ()) -> Self {
         
         var paymentDetails = JSONDictionary()
         
@@ -396,7 +396,7 @@ public class Transaction: SessionProtocol {
     - Parameter block: a completion block that is called when the request finishes
     */
     public func list(block: (Response) -> ()) {
-        self.list(nil, block: block)
+        self.list(pagination: nil, block: block)
     }
     
     

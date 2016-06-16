@@ -42,7 +42,7 @@ public class PayButton: UIButton {
     */
     public init(currentTheme: Theme) {
         self.theme = currentTheme
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.setupView()
     }
     
@@ -78,9 +78,9 @@ public class PayButton: UIButton {
     public func setupView() {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = self.theme.getButtonColor()
-        self.setTitle("Pay", forState: .Normal)
-        self.setTitleColor(self.theme.getButtonTitleColor(), forState: .Normal)
-        self.titleLabel?.font = UIFont.boldSystemFontOfSize(22)
+        self.setTitle("Pay", for: [])
+        self.setTitleColor(self.theme.getButtonTitleColor(), for: [])
+        self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 22)
     }
     
 }

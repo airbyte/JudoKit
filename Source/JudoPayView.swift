@@ -406,9 +406,9 @@ public class JudoPayView: UIView {
      
      - parameter input: The input field which the user is currently idling
      */
-    func showHintAfterDefaultDelay(input: JudoPayInputField) {
+    func showHintAfterDefaultDelay(on input: JudoPayInputField) {
         if self.secureCodeInputField.isTokenPayment && self.secureCodeInputField.textField.text!.characters.count == 0 {
-            self.hintLabel.showHint(self.secureCodeInputField.hintLabelText())
+            self.hintLabel.show(hint: self.secureCodeInputField.hintLabelText())
         } else {
             self.hintLabel.hideHint()
         }
@@ -420,7 +420,7 @@ public class JudoPayView: UIView {
                 && input.textField.isFirstResponder() {
                 
                 self.updateSecurityMessagePosition(toggleUp: false)
-                self.hintLabel.showHint(input.hintLabelText())
+                self.hintLabel.show(hint: input.hintLabelText())
             }
         })
     }

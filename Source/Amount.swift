@@ -76,23 +76,23 @@ public struct Amount: StringLiteralConvertible {
      - returns: an Amount object
      */
     init(amount value: String) {
-        self.amount = NSDecimalNumber(string: value.substringToIndex(value.endIndex.advancedBy(-3)))
-        self.currency = Currency(value.substringFromIndex(value.endIndex.advancedBy(-3)))
+        self.amount = NSDecimalNumber(string: value.substring(to: value.index(value.endIndex, offsetBy: -3)))
+        self.currency = Currency(value.substring(from: value.index(value.endIndex, offsetBy: -3)))
     }
     
     public init(stringLiteral value: String) {
-        self.amount = NSDecimalNumber(string: value.substringToIndex(value.endIndex.advancedBy(-3)))
-        self.currency = Currency(value.substringFromIndex(value.endIndex.advancedBy(-3)))
+        self.amount = NSDecimalNumber(string: value.substring(to: value.index(value.endIndex, offsetBy: -3)))
+        self.currency = Currency(value.substring(from: value.index(value.endIndex, offsetBy: -3)))
     }
     
     public init(extendedGraphemeClusterLiteral value: String) {
-        self.amount = NSDecimalNumber(string: value.substringToIndex(value.endIndex.advancedBy(-3)))
-        self.currency = Currency(value.substringFromIndex(value.endIndex.advancedBy(-3)))
+        self.amount = NSDecimalNumber(string: value.substring(to: value.index(value.endIndex, offsetBy: -3)))
+        self.currency = Currency(value.substring(from: value.index(value.endIndex, offsetBy: -3)))
     }
     
     public init(unicodeScalarLiteral value: String) {
-        self.amount = NSDecimalNumber(string: value.substringToIndex(value.endIndex.advancedBy(-3)))
-        self.currency = Currency(value.substringFromIndex(value.endIndex.advancedBy(-3)))
+        self.amount = NSDecimalNumber(string: value.substring(to: value.index(value.endIndex, offsetBy: -3)))
+        self.currency = Currency(value.substring(from: value.index(value.endIndex, offsetBy: -3)))
     }
     
 }

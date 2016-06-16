@@ -114,7 +114,7 @@ public extension JudoInputType where Self: JudoPayInputField {
      Helper call for delegate method
      */
     public func didChangeInputText() {
-        self.delegate?.judoPayInputDidChangeText(self)
+        self.delegate?.judoPayInputFieldDidChangeText(on: self)
     }
     
     

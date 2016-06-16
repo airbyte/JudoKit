@@ -256,7 +256,7 @@ public struct JudoKit {
      - Returns: a Payment Object
      */
     public func payment(with judoId: String, amount: Amount, reference: Reference) throws -> Payment {
-        return try Payment(judoId: judoId, amount: amount, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+        return try Payment(judoId: judoId, amount: amount, reference: reference).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -272,7 +272,7 @@ public struct JudoKit {
      - Returns: pre-auth Object
      */
     public func preAuth(with judoId: String, amount: Amount, reference: Reference) throws -> PreAuth {
-        return try PreAuth(judoId: judoId, amount: amount, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+        return try PreAuth(judoId: judoId, amount: amount, reference: reference).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -288,7 +288,7 @@ public struct JudoKit {
      - Returns: a RegisterCard Object
      */
     public func registerCard(with judoId: String, reference: Reference) throws -> RegisterCard {
-        return try RegisterCard(judoId: judoId, amount: nil, reference: reference).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+        return try RegisterCard(judoId: judoId, amount: nil, reference: reference).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -306,7 +306,7 @@ public struct JudoKit {
      - Returns: a Receipt Object for reactive usage
      */
     public func receipt(with receiptId: String? = nil) throws -> Receipt {
-        return try Receipt(receiptId: receiptId).apiSession(self.apiSession)
+        return try Receipt(receiptId: receiptId).set(session: self.apiSession)
     }
     
     
@@ -321,8 +321,8 @@ public struct JudoKit {
      
      - Returns: a Collection object for reactive usage
      */
-    public func collection(with receiptId: String, amount: Amount) throws -> Collection {
-        return try Collection(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+    public func collection(with receiptId: String, amount: Amount) throws -> CollectionTransaction {
+        return try CollectionTransaction(receiptId: receiptId, amount: amount).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -338,7 +338,7 @@ public struct JudoKit {
      - Returns: a Refund object for reactive usage
      */
     public func refund(with receiptId: String, amount: Amount) throws -> Refund {
-        return try Refund(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+        return try Refund(receiptId: receiptId, amount: amount).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -354,7 +354,7 @@ public struct JudoKit {
      - Returns: a Void object for reactive usage
      */
     public func voidTransaction(with receiptId: String, amount: Amount) throws -> VoidTransaction {
-        return try VoidTransaction(receiptId: receiptId, amount: amount).apiSession(self.apiSession).deviceSignal(self.judoShield.deviceSignal())
+        return try VoidTransaction(receiptId: receiptId, amount: amount).set(session: self.apiSession).set(deviceSignal: self.judoShield.deviceSignal())
     }
     
     
@@ -380,7 +380,7 @@ public struct JudoKit {
     - parameter viewController: the viewController to initiate and show
     - parameter cardDetails:    optional dictionary that contains card info
     */
-    mutating func initiateAndShow(viewController: JudoPayViewController) {
+    mutating func initiateAndShow(_ viewController: JudoPayViewController) {
         self.activeViewController = viewController
         self.showViewController(UINavigationController(rootViewController: viewController))
     }

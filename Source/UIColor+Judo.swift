@@ -32,7 +32,7 @@ public extension UIColor {
      
      - returns: The inverse color of the receiver
      */
-    public func inverseColor() -> UIColor {
+    public func inverse() -> UIColor {
         var r: CGFloat = 0.0
         var g: CGFloat = 0.0
         var b: CGFloat = 0.0

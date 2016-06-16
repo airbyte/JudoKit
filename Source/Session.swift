@@ -81,8 +81,8 @@ public struct Session {
             requestBody = try JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions.prettyPrinted)
         } catch {
             print("body serialization failed")
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                completion(nil, JudoError(.SerializationError))
+            DispatchQueue.main.async(execute: {
+                completion(Response(error: JudoError(.SerializationError)))
             })
             return // BAIL
         }
@@ -117,8 +117,8 @@ public struct Session {
                 requestBody = try JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions.prettyPrinted)
             } catch  {
                 print("body serialization failed")
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completion(nil, JudoError(.SerializationError))
+                DispatchQueue.main.async(execute: {
+                    completion(Response(error: JudoError(.SerializationError)))
                 })
                 return
             }
@@ -153,8 +153,8 @@ public struct Session {
             requestBody = try JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions.prettyPrinted)
         } catch {
             print("body serialization failed")
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                completion(nil, JudoError(.SerializationError))
+            DispatchQueue.main.async(execute: {
+                completion(Response(error: JudoError(.SerializationError)))
             })
             return // BAIL
         }
@@ -225,7 +225,16 @@ public struct Session {
             // Error handling
             if data == nil, let error = err {
                 DispatchQueue.main.async(execute: {
-                    completion(Response(error: JudoError.from(NSError: error)))
+                    
+                    let returnError: JudoError!
+                    
+                    if let judoErrorCode = JudoErrorCode(rawValue: error.code) {
+                        returnError = JudoError(judoErrorCode, dict: error.userInfo as? JSONDictionary)
+                    } else {
+                        returnError = JudoError(.UnknownError, bridgedError: error)
+                    }
+                    
+                    completion(Response(error: returnError))
                 })
                 return // BAIL
             }
@@ -320,7 +329,7 @@ public struct Session {
     
     - returns: a Dictionary containing all the information to submit for a refund or a collection
     */
-    func progressionParameters(receiptId: String, amount: Amount, paymentReference: String, deviceSignal: JSONDictionary?) -> JSONDictionary {
+    func progressionParameters(with receiptId: String, amount: Amount, paymentReference: String, deviceSignal: JSONDictionary?) -> JSONDictionary {
         var dictionary = ["receiptId":receiptId, "amount": amount.amount, "yourPaymentReference": paymentReference]
         if let deviceSignal = deviceSignal {
             dictionary["clientDetails"] = deviceSignal

@@ -122,7 +122,7 @@ extension BillingCountryInputField: UIPickerViewDataSource {
      
      - returns: number of rows in component
      */
-    public func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return BillingCountry.allValues.count
     }
     
@@ -141,7 +141,7 @@ extension BillingCountryInputField: UIPickerViewDelegate {
     
     - returns: title of a given component and row
     */
-    public func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return BillingCountry.allValues[row].title()
     }
     
@@ -153,9 +153,9 @@ extension BillingCountryInputField: UIPickerViewDelegate {
      - parameter row:        The row
      - parameter component:  The component
      */
-    public func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.selectedCountry = BillingCountry.allValues[row]
         self.textField.text = self.selectedCountry.title()
-        self.delegate?.billingCountryInputDidEnter(self, billingCountry: self.selectedCountry)
+        self.delegate?.billingCountryInputField(self, didEnterBillingCountry: self.selectedCountry)
     }
 }

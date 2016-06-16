@@ -98,11 +98,11 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
         self.clipsToBounds = true
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.layer.borderColor = self.theme.getInputFieldBorderColor().CGColor
+        self.layer.borderColor = self.theme.getInputFieldBorderColor().cgColor
         self.layer.borderWidth = 0.5
         
         self.textField.delegate = self
-        self.textField.keyboardType = .NumberPad
+        self.textField.keyboardType = .numberPad
         
         self.addSubview(self.textField)
         self.addSubview(self.redBlock)
@@ -110,32 +110,32 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
         self.textField.translatesAutoresizingMaskIntoConstraints = false
         self.textField.textColor = self.theme.getInputFieldTextColor()
         self.textField.tintColor = self.theme.tintColor
-        self.textField.font = UIFont.boldSystemFontOfSize(14)
-        self.textField.addTarget(self, action: #selector(JudoInputType.textFieldDidChangeValue(_:)), forControlEvents: .EditingChanged)
+        self.textField.font = UIFont.boldSystemFont(ofSize: 14)
+        self.textField.addTarget(self, action: Selector("JudoInputType.textFieldDidChangeValue(textField:)"), for: .editingChanged)
         
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[text]|", options: .AlignAllBaseline, metrics: nil, views: ["text":textField]))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[text]|", options: .alignAllLastBaseline, metrics: nil, views: ["text":textField]))
         
-        self.setActive(false)
+        self.set(active: false)
         
-        self.textField.attributedPlaceholder = NSAttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName: self.theme.getPlaceholderTextColor()])
+        self.textField.attributedPlaceholder = AttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName: self.theme.getPlaceholderTextColor()])
         
         if self.containsLogo() {
             let logoView = self.logoView()!
-            logoView.frame = CGRectMake(0, 0, 42, 27)
+            logoView.frame = CGRect(x: 0, y: 0, width: 42, height: 27)
             self.addSubview(self.logoContainerView)
             self.logoContainerView.translatesAutoresizingMaskIntoConstraints = false
             self.logoContainerView.clipsToBounds = true
             self.logoContainerView.layer.cornerRadius = 2
             self.logoContainerView.addSubview(logoView)
             
-            self.addConstraint(NSLayoutConstraint(item: self.logoContainerView, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0.0))
-            self.logoContainerView.addConstraint(NSLayoutConstraint(item: self.logoContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 27.0))
+            self.addConstraint(NSLayoutConstraint(item: self.logoContainerView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1.0, constant: 0.0))
+            self.logoContainerView.addConstraint(NSLayoutConstraint(item: self.logoContainerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 27.0))
         }
         
         let visualFormat = self.containsLogo() ? "|-13-[text][logo(42)]-13-|" : "|-13-[text]-13-|"
         let views: [String:UIView] = ["text": textField, "logo": self.logoContainerView]
         
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat(visualFormat, options: .DirectionLeftToRight, metrics: nil, views: views))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: visualFormat, options: .directionLeftToRight, metrics: nil, views: views))
     }
     
     // MARK: Helpers
@@ -146,10 +146,10 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      */
     public func updateCardLogo() {
         let logoView = self.logoView()!
-        logoView.frame = CGRectMake(0, 0, 42, 27)
+        logoView.frame = CGRect(x: 0, y: 0, width: 42, height: 27)
         if let oldLogoView = self.logoContainerView.subviews.first as? CardLogoView {
             if oldLogoView.type != logoView.type {
-                UIView.transitionFromView(self.logoContainerView.subviews.first!, toView: logoView, duration: 0.3, options: .TransitionFlipFromBottom, completion: nil)
+                UIView.transition(from: self.logoContainerView.subviews.first!, to: logoView, duration: 0.3, options: .transitionFlipFromBottom, completion: nil)
             }
         }
         self.textField.attributedPlaceholder = self.placeholder()
@@ -161,7 +161,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      
      - parameter isActive: Boolean stating whether textfield has become active or inactive
      */
-    public func setActive(isActive: Bool) {
+    public func set(active isActive: Bool) {
         self.textField.alpha = isActive ? 1.0 : 0.5
         self.logoContainerView.alpha = isActive ? 1.0 : 0.5
     }
@@ -172,8 +172,8 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      */
     public func dismissError() {
         if self.redBlock.bounds.size.height > 0 {
-            UIView.animateWithDuration(0.4) { () -> Void in
-                self.redBlock.frame = CGRectMake(0.0, self.bounds.height, self.bounds.width, 4.0)
+            UIView.animate(withDuration: 0.4) { () -> Void in
+                self.redBlock.frame = CGRect(x: 0.0, y: self.bounds.height, width: self.bounds.width, height: 4.0)
                 self.textField.textColor = self.theme.getTextColor()
             }
         }
@@ -185,18 +185,19 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
      
      - parameter textField: The `UITextField` that has begun editing
      */
-    public func textFieldDidBeginEditing(textField: UITextField) {
-        self.setActive(true)
-        self.delegate?.judoPayInputDidChangeText(self)
+    public func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.set(active: true)
+        self.delegate?.judoPayInputFieldDidChangeText(on: self)
     }
+    
     
     /**
      Delegate method when text field did end editing
      
      - parameter textField: the `UITextField` that has ended editing
      */
-    public func textFieldDidEndEditing(textField: UITextField) {
-        self.setActive(textField.text?.characters.count > 0)
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        self.set(active: textField.text?.characters.count > 0)
     }
     
 }
@@ -217,7 +218,7 @@ extension JudoPayInputField: JudoInputType {
      Helper call for delegate method
      */
     public func didChangeInputText() {
-        self.delegate?.judoPayInputDidChangeText(self)
+        self.delegate?.judoPayInputFieldDidChangeText(on: self)
     }
     
     

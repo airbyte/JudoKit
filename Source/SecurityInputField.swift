@@ -66,7 +66,7 @@ public class SecurityInputField: JudoPayInputField {
         
         // Get old and new text
         let oldString = textField.text!
-        let newString = (oldString as NSString).stringByReplacingCharactersInRange(range, withString: string)
+        let newString = (oldString as NSString).replacingCharacters(in: range, with: string)
         
         if newString.characters.count == 0 {
             return true
@@ -98,7 +98,7 @@ public class SecurityInputField: JudoPayInputField {
         self.didChangeInputText()
         guard let text = textField.text else { return }
         
-        self.delegate?.judoPayInput(self, isValid: text.characters.count == self.cardNetwork.securityCodeLength())
+        self.delegate?.judoPayInputField(self, isValid: text.characters.count == self.cardNetwork.securityCodeLength())
     }
     
     
@@ -108,7 +108,7 @@ public class SecurityInputField: JudoPayInputField {
      - returns: An Attributed String that is the placeholder of the receiver
      */
     public override func placeholder() -> AttributedString? {
-        return NSAttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName:self.theme.getPlaceholderTextColor()])
+        return AttributedString(string: self.title(), attributes: [NSForegroundColorAttributeName:self.theme.getPlaceholderTextColor()])
     }
     
     

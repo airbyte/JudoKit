@@ -72,7 +72,7 @@ public class HintLabel: UILabel {
      
      - parameter text: The hint text string to show
      */
-    public func showHint(_ text: String) {
+    public func show(hint text: String) {
         self.hintText = AttributedString(string: text, attributes: [NSForegroundColorAttributeName:self.theme.getTextColor()])
         if self.alertText == nil {
             self.addAnimation()
@@ -87,7 +87,7 @@ public class HintLabel: UILabel {
      
      - parameter text: The alert text string to show
      */
-    public func showAlert(text: String) {
+    public func show(alert text: String) {
         self.addAnimation()
         
         self.alertText = AttributedString(string: text, attributes: [NSForegroundColorAttributeName:UIColor.red()])

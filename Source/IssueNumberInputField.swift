@@ -87,7 +87,7 @@ public class IssueNumberInputField: JudoPayInputField {
         
         guard let text = textField.text else { return }
         
-        self.delegate?.issueNumberInputDidEnterCode(self, issueNumber: text)
+        self.delegate?.issueNumberInputField(self, didEnterIssueNumber: text)
     }
     
     

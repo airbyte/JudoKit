@@ -153,7 +153,7 @@ public struct Theme {
         if self.colorMode() {
             return dgc
         } else {
-            return dgc.inverseColor()
+            return dgc.inverse()
         }
     }
     
@@ -171,7 +171,7 @@ public struct Theme {
         if self.colorMode() {
             return dgc
         } else {
-            return dgc.inverseColor()
+            return dgc.inverse()
         }
     }
     
@@ -199,7 +199,7 @@ public struct Theme {
         if self.colorMode() {
             return lgc
         } else {
-            return lgc.inverseColor()
+            return lgc.inverse()
         }
     }
     
@@ -252,9 +252,9 @@ public struct Theme {
             return self.judoButtonTitleColor!
         }
         if self.colorMode() {
-            return .whiteColor()
+            return .white()
         } else {
-            return .blackColor()
+            return .black()
         }
     }
     
@@ -272,7 +272,7 @@ public struct Theme {
         if self.colorMode() {
             return lbc
         } else {
-            return lbc.inverseColor()
+            return lbc.inverse()
         }
     }
     
@@ -297,9 +297,9 @@ public struct Theme {
             return self.judoLoadingBlockViewColor!
         }
         if self.colorMode() {
-            return .whiteColor()
+            return .white()
         } else {
-            return .blackColor()
+            return .black()
         }
     }
     
@@ -310,7 +310,7 @@ public struct Theme {
      - returns: A UIColor object
      */
     public func getInputFieldBackgroundColor() -> UIColor {
-        return self.judoInputFieldBackgroundColor ?? .whiteColor()
+        return self.judoInputFieldBackgroundColor ?? .white()
     }
     
 }

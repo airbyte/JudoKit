@@ -40,7 +40,7 @@ public class _DSWebView: UIWebView {
     - returns: a 3DSWebView object
     */
     public init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.setupView()
     }
     
@@ -89,24 +89,24 @@ public class _DSWebView: UIWebView {
     
     - returns: the receiptId of the transaction
     */
-    public func load3DSWithPayload(payload: [String : AnyObject]) throws -> String {
-        let allowedCharacterSet = NSCharacterSet(charactersInString: ":/=,!$&'()*+;[]@#?").invertedSet
+    public func load3DS(withPayload payload: [String : AnyObject]) throws -> String {
+        let allowedCharacterSet = CharacterSet(charactersIn: ":/=,!$&'()*+;[]@#?").inverted
         
         guard let urlString = payload["acsUrl"] as? String,
-            let acsURL = NSURL(string: urlString),
+            let acsURL = URL(string: urlString),
             let md = payload["md"],
             let receiptId = payload["receiptId"] as? String,
             let paReqString = payload["paReq"],
-            let paReqEscapedString = paReqString.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet),
-            let termURLString = "https://pay.judopay.com/iOS/Parse3DS".stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) else {
+            let paReqEscapedString = paReqString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet),
+            let termURLString = "https://pay.judopay.com/iOS/Parse3DS".addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) else {
                 throw JudoError(.Failed3DSError)
         }
         
-        if let postData = "MD=\(md)&PaReq=\(paReqEscapedString)&TermUrl=\(termURLString)".dataUsingEncoding(NSUTF8StringEncoding) {
-            let request = NSMutableURLRequest(URL: acsURL)
-            request.HTTPMethod = "POST"
-            request.setValue("\(postData.length)", forHTTPHeaderField: "Content-Length")
-            request.HTTPBody = postData
+        if let postData = "MD=\(md)&PaReq=\(paReqEscapedString)&TermUrl=\(termURLString)".data(using: String.Encoding.utf8) {
+            var request = URLRequest(url: acsURL)
+            request.httpMethod = "POST"
+            request.setValue("\(postData.count)", forHTTPHeaderField: "Content-Length")
+            request.httpBody = postData
             
             self.loadRequest(request)
         } else {

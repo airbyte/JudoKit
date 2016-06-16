@@ -172,7 +172,7 @@ public class DateInputField: JudoPayInputField {
         } else if newString.characters.count == 5 {
             return true
         } else {
-            self.delegate?.dateInput(self, error: JudoError(.InputLengthMismatchError))
+            self.delegate?.dateInputField(self, didEncounter: JudoError(.InputLengthMismatchError))
             return false
         }
     }
@@ -213,13 +213,13 @@ public class DateInputField: JudoPayInputField {
         if self.dateFormatter.date(from: text) == nil { return }
         
         if self.isValid() {
-            self.delegate?.dateInput(self, didFindValidDate: textField.text!)
+            self.delegate?.dateInputField(self, didFindValidDate: textField.text!)
         } else {
             var errorMessage = "Check expiry date"
             if self.isStartDate {
                 errorMessage = "Check start date"
             }
-            self.delegate?.dateInput(self, error: JudoError(.InvalidEntry, message: errorMessage))
+            self.delegate?.dateInputField(self, didEncounter: JudoError(.InvalidEntry, message: errorMessage))
         }
     }
     

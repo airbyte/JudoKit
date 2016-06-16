@@ -175,7 +175,7 @@ public struct Card {
         - Returns: a given String as a placeholder
         */
         public func placeholderString() -> String? {
-            return self.patternString()?.stringByReplacingOccurrencesOfString("X", withString: "0")
+            return self.patternString()?.replacingOccurrences(of: "X", with: "0")
         }
     }
     
@@ -469,7 +469,7 @@ public enum CardNetwork: Int64 {
      
      - returns: a CardNetwork if the prefix matches a given set of CardNetworks or CardNetwork.Unknown
      */
-    public static func networkForString(string: String, constrainedToNetworks networks: [CardNetwork]) -> CardNetwork {
+    public static func network(for string: String, constrainedToNetworks networks: [CardNetwork]) -> CardNetwork {
         let result = networks.filter({ $0.prefixes().filter({ string.hasPrefix($0) }).count > 0 })
         if result.count == 1 {
             return result[0]
@@ -485,12 +485,12 @@ public enum CardNetwork: Int64 {
      
      - returns: a CardNetwork if the prefix matches any CardNetwork prefix
      */
-    public static func networkForString(string: String) -> CardNetwork {
+    public static func network(for string: String) -> CardNetwork {
         let allNetworks: [CardNetwork] = [.Visa, .MasterCard, .AMEX, .DinersClub, .Maestro, .ChinaUnionPay, .Discover, .InterPayment, .InstaPayment, .JCB, .Dankort, .UATP]
-        return self.networkForString(string, constrainedToNetworks: allNetworks)
+        return self.network(for: string, constrainedToNetworks: allNetworks)
     }
     
-
+    
     /**
     Security code name for a certain card
     
@@ -606,15 +606,15 @@ public class CardDetails: NSObject, NSCoding {
         
         guard let expiryMonth = expiryMonth, let expiryYear = expiryYear else { self.init(dict); return }
         
-        let dateComponents = NSDateComponents()
+        var dateComponents = DateComponents()
         dateComponents.month = expiryMonth
         dateComponents.year = expiryYear
         
-        if let gregorian = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian) {
-            if let date = gregorian.dateFromComponents(dateComponents) {
-                let dateFormatter = NSDateFormatter()
+        if let gregorian = Calendar(identifier: .gregorian) {
+            if let date = gregorian.date(from: dateComponents) {
+                let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM/yy"
-                let dateString = dateFormatter.stringFromDate(date)
+                let dateString = dateFormatter.string(from: date)
                 dict["endDate"] = dateString
             }
         }
@@ -652,10 +652,10 @@ public class CardDetails: NSObject, NSCoding {
      - returns: a CardDetails object or nil
      */
     public required init?(coder decoder: NSCoder) {
-        let cardLastFour = decoder.decodeObjectForKey("cardLastFour") as? String?
-        let endDate = decoder.decodeObjectForKey("endDate") as? String?
-        let cardToken = decoder.decodeObjectForKey("cardToken") as? String?
-        let cardNetwork = decoder.decodeInt64ForKey("cardNetwork")
+        let cardLastFour = decoder.decodeObject(forKey: "cardLastFour") as? String?
+        let endDate = decoder.decodeObject(forKey: "endDate") as? String?
+        let cardToken = decoder.decodeObject(forKey: "cardToken") as? String?
+        let cardNetwork = decoder.decodeInt64(forKey: "cardNetwork")
         
         self.cardLastFour = cardLastFour ?? nil
         self.endDate = endDate ?? nil
@@ -671,14 +671,14 @@ public class CardDetails: NSObject, NSCoding {
      
      - parameter aCoder: the Coder
      */
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.cardLastFour, forKey: "cardLastFour")
-        aCoder.encodeObject(self.endDate, forKey: "endDate")
-        aCoder.encodeObject(self.cardToken, forKey: "cardToken")
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.cardLastFour, forKey: "cardLastFour")
+        aCoder.encode(self.endDate, forKey: "endDate")
+        aCoder.encode(self.cardToken, forKey: "cardToken")
         if let cardNetwork = self.cardNetwork {
-            aCoder.encodeInt64(cardNetwork.rawValue, forKey: "cardNetwork")
+            aCoder.encode(cardNetwork.rawValue, forKey: "cardNetwork")
         } else {
-            aCoder.encodeInt64(0, forKey: "cardNetwork")
+            aCoder.encode(0, forKey: "cardNetwork")
         }
     }
     
@@ -692,7 +692,7 @@ public class CardDetails: NSObject, NSCoding {
         if self.cardLastFour == nil && self._cardNumber == nil {
             return nil
         } else if let cardNumber = self._cardNumber {
-            self.cardLastFour = cardNumber.substringFromIndex(cardNumber.endIndex.advancedBy(-4))
+            self.cardLastFour = cardNumber.substring(from: cardNumber.index(cardNumber.endIndex, offsetBy: -4))
         }
         
         guard let cardNetwork = self.cardNetwork else { return "**** \(cardLastFour!)" }
@@ -716,8 +716,8 @@ public class CardDetails: NSObject, NSCoding {
         
         if ed.characters.count == 4 {
             // backend returns the end date without a slash so for UI purposes we have to add it
-            let prefix = ed.substringToIndex(ed.startIndex.advancedBy(2))
-            let suffix = ed.substringFromIndex(ed.endIndex.advancedBy(-2))
+            let prefix = ed.substring(to: ed.index(ed.startIndex, offsetBy: 2))
+            let suffix = ed.substring(from: ed.index(ed.startIndex, offsetBy: -2))
             return "\(prefix)/\(suffix)"
         } else {
             return ed

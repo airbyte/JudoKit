@@ -71,7 +71,7 @@ public class PostCodeInputField: JudoPayInputField {
         
         // Get old and new text
         let oldString = textField.text!
-        let newString = (oldString as NSString).stringByReplacingCharactersInRange(range, withString: string)
+        let newString = (oldString as NSString).replacingCharacters(in: range, with: string)
         
         if newString.characters.count == 0 {
             return true
@@ -103,17 +103,17 @@ public class PostCodeInputField: JudoPayInputField {
         }
         guard let newString = self.textField.text?.uppercased() else { return false }
         
-        let usaRegex = try! RegularExpression(pattern: kUSARegexString, options: .AnchorsMatchLines)
-        let ukRegex = try! RegularExpression(pattern: kUKRegexString, options: .AnchorsMatchLines)
-        let canadaRegex = try! RegularExpression(pattern: kCanadaRegexString, options: .AnchorsMatchLines)
+        let usaRegex = try! RegularExpression(pattern: kUSARegexString, options: .anchorsMatchLines)
+        let ukRegex = try! RegularExpression(pattern: kUKRegexString, options: .anchorsMatchLines)
+        let canadaRegex = try! RegularExpression(pattern: kCanadaRegexString, options: .anchorsMatchLines)
         
         switch billingCountry {
         case .UK:
-            return ukRegex.numberOfMatchesInString(newString, options: NSMatchingOptions.WithoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0
+            return ukRegex.numberOfMatches(in: newString, options: RegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0
         case .Canada:
-            return canadaRegex.numberOfMatchesInString(newString, options: NSMatchingOptions.WithoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0 && newString.characters.count == 6
+            return canadaRegex.numberOfMatches(in: newString, options: RegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0 && newString.characters.count == 6
         case .USA:
-            return usaRegex.numberOfMatchesInString(newString, options: NSMatchingOptions.WithoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0
+            return usaRegex.numberOfMatches(in: newString, options: RegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, newString.characters.count)) > 0
         case .Other:
             return newString.isNumeric() && newString.characters.count <= 8
         }
@@ -126,20 +126,20 @@ public class PostCodeInputField: JudoPayInputField {
      - parameter textField: The text field of which the content has changed
      */
     public override func textFieldDidChangeValue(_ textField: UITextField) {
-        super.textField(didChangeValue: textField)
+        super.textFieldDidChangeValue(textField)
         
         self.didChangeInputText()
         
         let valid = self.isValid()
         
-        self.delegate?.judoPayInput(self, isValid: valid)
+        self.delegate?.judoPayInputField(self, isValid: valid)
         
         if !valid {
             guard let characterCount = self.textField.text?.characters.count else { return }
             switch billingCountry {
             case .UK where characterCount >= 7, .Canada where characterCount >= 6:
-                self.errorAnimation(true)
-                self.delegate?.postCodeInputField(self, didEnterInvalidPostCodeWithError: JudoError(.InvalidPostCode, message: "Check " + self.billingCountry.titleDescription()))
+                self.animateErrorWiggle(showingRedBlock: true)
+                self.delegate?.postCodeInputField(self, didEncounter: JudoError(.InvalidPostCode, message: "Check " + self.billingCountry.titleDescription()))
             default:
                 return
             }

@@ -55,6 +55,7 @@ public struct Response {
     init(_ pagination: Pagination?) {
         self.pagination = pagination
         self.value = Value()
+        self.error = nil
     }
     
     
@@ -69,6 +70,7 @@ public struct Response {
     init(_ value: Value? = nil, error: JudoError? = nil) {
         self.value = value
         self.error = error
+        self.pagination = nil
     }
     
     

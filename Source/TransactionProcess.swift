@@ -52,11 +52,11 @@ public class TransactionProcess {
         self.receiptId = receiptId
         self.amount = amount
         
-        guard let uuidString = UIDevice.currentDevice().identifierForVendor?.UUIDString else {
+        guard let uuidString = UIDevice.current().identifierForVendor?.uuidString else {
             throw JudoError(.UnknownError)
         }
-        let finalString = String((uuidString + String(NSDate())).characters.filter { ![":", "-", "+"].contains(String($0)) }).stringByReplacingOccurrencesOfString(" ", withString: "")
-        self.paymentReference = finalString.substringToIndex(finalString.endIndex.advancedBy(-4))
+        let finalString = String((uuidString + String(NSDate())).characters.filter { ![":", "-", "+"].contains(String($0)) }).replacingOccurrences(of: " ", with: "")
+        self.paymentReference = finalString.substring(to: finalString.index(finalString.endIndex, offsetBy: -4))
         
         // Luhn check the receipt ID
         if !receiptId.isLuhnValid() {
@@ -72,7 +72,7 @@ public class TransactionProcess {
      
      - Returns: reactive self
      */
-    public func apiSession(session: Session) -> Self {
+    public func set(session: Session) -> Self {
         self.apiSession = session
         return self
     }
@@ -85,7 +85,7 @@ public class TransactionProcess {
      
      - Returns: reactive self
      */
-    public func deviceSignal(deviceSignal: JSONDictionary) -> Self {
+    public func set(deviceSignal: JSONDictionary) -> Self {
         self.deviceSignal = deviceSignal
         return self
     }
@@ -98,12 +98,12 @@ public class TransactionProcess {
      
      - Returns: reactive self
      */
-    public func completion(block: (Result) -> ()) -> Self {
+    public func execute(withCompletion block: (Response) -> ()) -> Self {
         
-        guard let parameters = self.apiSession?.progressionParameters(self.receiptId, amount: self.amount, paymentReference: self.paymentReference, deviceSignal: self.deviceSignal) else { return self }
+        guard let parameters = self.apiSession?.progressionParameters(with: receiptId, amount: amount, paymentReference: paymentReference, deviceSignal: deviceSignal) else { return self }
         
-        self.apiSession?.POST(self.path(), parameters: parameters) { (dict, error) -> Void in
-            block(dict, error)
+        self.apiSession?.POST(self.path(), parameters: parameters) { (response) -> Void in
+            block(response)
         }
         
         return self

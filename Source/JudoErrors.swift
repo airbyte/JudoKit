@@ -136,54 +136,12 @@ public struct JudoError: ErrorProtocol {
     
     
     /**
-     Bridge an NSError to JudoError
-     
-     - parameter error: the NSError to bridge from
-     
-     - returns: a JudoError object
-     */
-    public static func from(NSError: NSError) -> JudoError {
-        if let judoErrorCode = JudoErrorCode(rawValue: error.code) {
-            return JudoError(judoErrorCode, dict: error.userInfo as? JSONDictionary)
-        } else {
-            return JudoError(.UnknownError, bridgedError: error)
-        }
-    }
-    
-    
-    /**
      Get the raw value of the code of the receiver
      
      - returns: judo error code as Integer
      */
     public func rawValue() -> Int {
         return self.code.rawValue
-    }
-    
-    
-    /**
-     Bridge an object of JudoError type to NSError
-     
-     - returns: an NSError object
-     */
-    public func toNSError() -> NSError {
-        if let bridgedError = self.bridgedError {
-            return bridgedError
-        }
-        var userInfoDict = [String : AnyObject]()
-        if let message = self.message {
-            userInfoDict["message"] = message
-        }
-        if let category = self.category {
-            userInfoDict["category"] = category.rawValue
-        }
-        if let details = self.details {
-            userInfoDict["details"] = details as? AnyObject
-        }
-        if let modelErrors = self.details {
-            userInfoDict["modelErrors"] = modelErrors.map({ $0.rawValue }).flatMap({ $0 })
-        }
-        return NSError(domain: JudoErrorDomain, code: self.code.rawValue, userInfo: userInfoDict)
     }
     
 }
