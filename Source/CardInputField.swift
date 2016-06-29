@@ -108,8 +108,8 @@ public class CardInputField: JudoPayInputField {
      
      - parameter textField: the textfield of which the content has changed
      */
-    public override func textFieldDidChangeValue(_ textField: UITextField) {
-        super.textFieldDidChangeValue(textField: textField)
+    public override func textFieldDidChangeValue(in textField: UITextField) {
+        super.textFieldDidChangeValue(in: textField)
         
         self.didChangeInputText()
         

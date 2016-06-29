@@ -227,7 +227,7 @@ extension JudoPayInputField: JudoInputType {
      
      - parameter textField: the textfield of which the content has changed
      */
-    public func textFieldDidChangeValue(_ textField: UITextField) {
+    public func textFieldDidChangeValue(in textField: UITextField) {
         self.dismissError()
         // Method for subclassing
     }

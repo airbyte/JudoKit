@@ -183,8 +183,8 @@ public class JudoPayViewController: UIViewController {
         self.myView.layoutIfNeeded()
         
         if self.myView.cardDetails == nil && self.myView.cardInputField.textField.text != nil {
-            self.myView.cardInputField.textFieldDidChangeValue(textField: self.myView.cardInputField.textField)
-            self.myView.expiryDateInputField.textFieldDidChangeValue(textField: self.myView.expiryDateInputField.textField)
+            self.myView.cardInputField.textFieldDidChangeValue(in: self.myView.cardInputField.textField)
+            self.myView.expiryDateInputField.textFieldDidChangeValue(in: self.myView.expiryDateInputField.textField)
         }
     }
     

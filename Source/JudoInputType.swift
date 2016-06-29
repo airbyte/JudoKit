@@ -39,7 +39,7 @@ public protocol JudoInputType {
      
      - parameter textField: the `UITextField` that has a changed value
      */
-    func textFieldDidChangeValue(textField: UITextField)
+    func textFieldDidChangeValue(in textField: UITextField)
     
     
     /**
@@ -98,94 +98,94 @@ public protocol JudoInputType {
     func isValid() -> Bool
 }
 
-public extension JudoInputType where Self: JudoPayInputField {
-    
-    /**
-     Checks if the receiving input field has content that is valid
-     
-     - returns: true if valid input
-     */
-    public func isValid() -> Bool {
-        return false
-    }
-    
-    
-    /**
-     Helper call for delegate method
-     */
-    public func didChangeInputText() {
-        self.delegate?.judoPayInputFieldDidChangeText(on: self)
-    }
-    
-    
-    /**
-     Subclassed method that is called when text field content was changed
-     
-     - parameter textField: the textfield of which the content has changed
-     */
-    public func textFieldDidChangeValue(textField: UITextField) {
-        self.dismissError()
-        // Method for subclassing
-    }
-    
-    
-    /**
-     The placeholder string for the current input field
-     
-     - returns: an Attributed String that is the placeholder of the receiver
-     */
-    public func placeholder() -> AttributedString? {
-        return nil
-    }
-    
-    
-    /**
-     Boolean indicating whether the receiver has to show a logo
-     
-     - returns: true if inputField shows a Logo
-     */
-    public func containsLogo() -> Bool {
-        return false
-    }
-    
-    
-    /**
-     If the receiving input field contains a logo, this method returns Some
-     
-     - returns: an optional CardLogoView
-     */
-    public func logoView() -> CardLogoView? {
-        return nil
-    }
-    
-    
-    /**
-     Title of the receiver input field
-     
-     - returns: a string that is the title of the receiver
-     */
-    public func title() -> String {
-        return ""
-    }
-    
-    
-    /**
-     Width of the title
-     
-     - returns: width of the title
-     */
-    public func titleWidth() -> Int {
-        return 50
-    }
-    
-    
-    /**
-     Hint label text
-     
-     - returns: string that is shown as a hint when user resides in a inputField for more than 5 seconds
-     */
-    public func hintLabelText() -> String {
-        return ""
-    }
-    
-}
+//extension JudoPayInputField: JudoInputType {
+//    
+//    /**
+//     Checks if the receiving input field has content that is valid
+//     
+//     - returns: true if valid input
+//     */
+//    public func isValid() -> Bool {
+//        return false
+//    }
+//    
+//    
+//    /**
+//     Helper call for delegate method
+//     */
+//    public func didChangeInputText() {
+//        self.delegate?.judoPayInputFieldDidChangeText(on: self)
+//    }
+//    
+//    
+//    /**
+//     Subclassed method that is called when text field content was changed
+//     
+//     - parameter textField: the textfield of which the content has changed
+//     */
+//    public func textFieldDidChangeValue(textField: UITextField) {
+//        self.dismissError()
+//        // Method for subclassing
+//    }
+//    
+//    
+//    /**
+//     The placeholder string for the current input field
+//     
+//     - returns: an Attributed String that is the placeholder of the receiver
+//     */
+//    public func placeholder() -> AttributedString? {
+//        return nil
+//    }
+//    
+//    
+//    /**
+//     Boolean indicating whether the receiver has to show a logo
+//     
+//     - returns: true if inputField shows a Logo
+//     */
+//    public func containsLogo() -> Bool {
+//        return false
+//    }
+//    
+//    
+//    /**
+//     If the receiving input field contains a logo, this method returns Some
+//     
+//     - returns: an optional CardLogoView
+//     */
+//    public func logoView() -> CardLogoView? {
+//        return nil
+//    }
+//    
+//    
+//    /**
+//     Title of the receiver input field
+//     
+//     - returns: a string that is the title of the receiver
+//     */
+//    public func title() -> String {
+//        return ""
+//    }
+//    
+//    
+//    /**
+//     Width of the title
+//     
+//     - returns: width of the title
+//     */
+//    public func titleWidth() -> Int {
+//        return 50
+//    }
+//    
+//    
+//    /**
+//     Hint label text
+//     
+//     - returns: string that is shown as a hint when user resides in a inputField for more than 5 seconds
+//     */
+//    public func hintLabelText() -> String {
+//        return ""
+//    }
+//    
+//}
