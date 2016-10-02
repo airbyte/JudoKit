@@ -396,16 +396,13 @@ extension JudoPayViewController: UIWebViewDelegate {
      - parameter webView: The web view
      - parameter error:   The error
      */
-    public func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    public func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
         UIView.animateWithDuration(0.5, animations: { () -> Void in
             self.myView.threeDSecureWebView.alpha = 0.0
             self.myView.loadingView.stopAnimating()
         })
-        if error != nil {
-            self.completionBlock?(nil, JudoError(.Failed3DSError, bridgedError: error!))
-        } else {
-            self.completionBlock?(nil, JudoError(.Failed3DSError))
-        }
+        
+        self.completionBlock?(nil, JudoError(.Failed3DSError, bridgedError: error))
     }
     
 }

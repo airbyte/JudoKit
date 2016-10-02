@@ -113,7 +113,7 @@ public class JudoPayInputField: UIView, UITextFieldDelegate, ErrorAnimatable {
         self.textField.font = UIFont.boldSystemFontOfSize(14)
         self.textField.addTarget(self, action: #selector(JudoInputType.textFieldDidChangeValue(_:)), forControlEvents: .EditingChanged)
         
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[text]|", options: .AlignAllBaseline, metrics: nil, views: ["text":textField]))
+        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[text]|", options: .AlignAllLastBaseline, metrics: nil, views: ["text":textField]))
         
         self.setActive(false)
         

@@ -5234,8 +5234,8 @@ public func drawCardAmex() {
 
         //// Group 11
         //// SVGID_4_
-        CGContextSaveGState(context)
-        CGContextBeginTransparencyLayer(context, nil)
+        CGContextSaveGState(context!)
+        CGContextBeginTransparencyLayer(context!, nil)
 
         //// Clip Bezier 24
         let bezier24Path = UIBezierPath()
@@ -5255,17 +5255,17 @@ public func drawCardAmex() {
 
         //// Rectangle 2 Drawing
         let rectangle2Path = UIBezierPath(rect: CGRectMake(0.76, 0, 13.97, 13.97))
-        CGContextSaveGState(context)
+        CGContextSaveGState(context!)
         rectangle2Path.addClip()
-        CGContextDrawRadialGradient(context, sVGID_5_,
+        CGContextDrawRadialGradient(context!, sVGID_5_,
             CGPointMake(7.75, 6.99), 0,
             CGPointMake(7.75, 6.99), 6.99,
             [CGGradientDrawingOptions.DrawsBeforeStartLocation, CGGradientDrawingOptions.DrawsAfterEndLocation])
-        CGContextRestoreGState(context)
+        CGContextRestoreGState(context!)
 
 
-        CGContextEndTransparencyLayer(context)
-        CGContextRestoreGState(context)
+        CGContextEndTransparencyLayer(context!)
+        CGContextRestoreGState(context!)
 
 
 
@@ -6934,8 +6934,8 @@ public func drawCardCID() {
 
         //// Group 11
         //// SVGID_4_
-        CGContextSaveGState(context)
-        CGContextBeginTransparencyLayer(context, nil)
+        CGContextSaveGState(context!)
+        CGContextBeginTransparencyLayer(context!, nil)
 
         //// Clip Bezier 25
         let bezier25Path = UIBezierPath()
@@ -6955,17 +6955,17 @@ public func drawCardCID() {
 
         //// Rectangle 2 Drawing
         let rectangle2Path = UIBezierPath(rect: CGRectMake(0.76, 0, 13.97, 13.97))
-        CGContextSaveGState(context)
+        CGContextSaveGState(context!)
         rectangle2Path.addClip()
-        CGContextDrawRadialGradient(context, sVGID_5_2,
+        CGContextDrawRadialGradient(context!, sVGID_5_2,
             CGPointMake(7.75, 6.99), 0,
             CGPointMake(7.75, 6.99), 6.99,
             [CGGradientDrawingOptions.DrawsBeforeStartLocation, CGGradientDrawingOptions.DrawsAfterEndLocation])
-        CGContextRestoreGState(context)
+        CGContextRestoreGState(context!)
 
 
-        CGContextEndTransparencyLayer(context)
-        CGContextRestoreGState(context)
+        CGContextEndTransparencyLayer(context!)
+        CGContextRestoreGState(context!)
 
 
 

@@ -105,7 +105,7 @@ public class LoadingView: UIView {
         self.blockView.addConstraint(NSLayoutConstraint(item: self.activityIndicatorView, attribute: .CenterY, relatedBy: .Equal, toItem: self.blockView, attribute: .CenterY, multiplier: 1.0, constant: 0.0))
         self.blockView.addConstraint(NSLayoutConstraint(item: self.actionLabel, attribute: .CenterY, relatedBy: .Equal, toItem: self.blockView, attribute: .CenterY, multiplier: 1.0, constant: 0.0))
         
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-<=30-[block(>=270)]-<=30-|", options: .AlignAllBaseline, metrics: nil, views: ["block":self.blockView]))
+        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-<=30-[block(>=270)]-<=30-|", options: .AlignAllLastBaseline, metrics: nil, views: ["block":self.blockView]))
         
         self.addConstraint(NSLayoutConstraint(item: self.blockView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 110))
         self.addConstraint(NSLayoutConstraint(item: self.blockView, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0.0))
